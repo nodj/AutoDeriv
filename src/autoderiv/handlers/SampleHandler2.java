@@ -7,7 +7,11 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import autoderiv.Filter;
 
 /**
@@ -16,13 +20,14 @@ import autoderiv.Filter;
  * @see org.eclipse.core.commands.AbstractHandler
  */ 
 public class SampleHandler2 implements IResourceChangeListener{
-	
+
 	public static final String	CONF_FILE_NAME	= ".derived";
 	HashMap<IProject, Filter> projectsFilter = new HashMap<IProject, Filter>();
-	
-	
+
+
 	public class MyDeltaVisitor implements IResourceDeltaVisitor{
 
+		@SuppressWarnings("restriction")
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			System.out.println("SampleHandler2.MyDeltaVisitor.visit()");
@@ -34,30 +39,79 @@ public class SampleHandler2 implements IResourceChangeListener{
 			if(isProjResource){
 				System.out.println("SampleHandler2.MyDeltaVisitor.visit() ------------------------------------");
 			}
-			
-			Filter f = projectsFilter.get(proj);
-			
+
+			boolean isconfile = name.equals(CONF_FILE_NAME) && (res.getParent() == proj);
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
 				System.out.print("Resource ");
 				System.out.print(res.getFullPath());
 				System.out.println(" was added.");
-				if(name != CONF_FILE_NAME){
+
+				//TODO check if this pass the filter ! 
+
+				if(isconfile){
+					// no need to check that we are in the correct folder as the 
+					// search is recursive only for good cases
+					System.out.println("SampleHandler2.MyDeltaVisitor.visit() EXCELENT ! the project is now conf");
+					projectsFilter.remove(proj);
+					Filter f = new Filter(proj, res);
+					projectsFilter.put(proj, f);
+					
+					// filter the whole project
+					WorkspaceJob wj = new WorkspaceJob("WorkspaceJob name ? see SmapleHandler2") {
+						@Override
+						public IStatus runInWorkspace(IProgressMonitor arg0) throws CoreException {
+							f.filterProject(arg0); // fixme NullProgressMonitor may not be ideal...
+							return new Status(Status.OK, "AutoDeriv", "project filtered");
+						}
+					};
+					wj.schedule();
+					
+				}else{
+					
 					if(isProjResource) 	return true;	// project
 					if(name.length()==0)return true;	// workspace
 					return false; // as the conf file must be in the project folder
 				}
+
 				break;
 			case IResourceDelta.REMOVED:
 				System.out.print("Resource ");
 				System.out.print(res.getFullPath());
 				System.out.println(" was removed.");
+				if(isconfile){
+					System.out.println("SampleHandler2.MyDeltaVisitor.visit() No longer configured as AutoDeriv");
+					projectsFilter.remove(proj);
+				}else{
+					if(isProjResource) 	return true;	// project
+					if(name.length()==0)return true;	// workspace
+					return false; // as the conf file must be in the project folder
+				}
 				break;
 			case IResourceDelta.CHANGED:
 				System.out.print("Resource ");
 				System.out.print(res.getFullPath());
 				System.out.println(" has changed.");
+				Filter f = projectsFilter.get(proj);
+				if(isconfile){
+					if(f!=null)
+						f.updateConf();
+				}else{
+					if(f!=null){
+						WorkspaceJob wj = new WorkspaceJob("WorkspaceJob name ? see SmapleHandler2") {
+							@Override
+							public IStatus runInWorkspace(IProgressMonitor arg0) throws CoreException {
+								f.updateDerivedProperty(res, arg0);
+								return new Status(Status.OK, "AutoDeriv", "resource filtered");
+							}
+						};
+						wj.schedule();
+					}
+					return true;
+				}
+
 				break;
+				//FIXME other cases ???
 			}
 			return true;
 		}
@@ -93,12 +147,12 @@ public class SampleHandler2 implements IResourceChangeListener{
 			System.out.println("default..."); 
 			break;
 		}
-		
+
 		try {
 			event.getDelta().accept(new MyDeltaVisitor());
 		} catch (CoreException e1) {
 			e1.printStackTrace();
 		}
-		
+
 	}
 }
