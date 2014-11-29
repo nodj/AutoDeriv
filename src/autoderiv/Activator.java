@@ -21,18 +21,14 @@ public class Activator extends AbstractUIPlugin {
 	private IWorkspace workspace;
 	IResourceChangeListener listener;
 	
-	public Activator() { }
+	public Activator() {}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
 		System.out.println("Activator.start()");
-		
+		// TODO : manage the initial state. But don't waste time here.
 		workspace = ResourcesPlugin.getWorkspace();
 		listener = new SampleHandler2();
 		workspace.addResourceChangeListener(listener);
@@ -40,10 +36,6 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		workspace.addResourceChangeListener(listener);
@@ -51,22 +43,12 @@ public class Activator extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static Activator getDefault() {
-		return plugin;
-	}
+	public static Activator getDefault() { return plugin; }
 
-	/**
-	 * Returns an image descriptor for the image file at the given
+	/**Returns an image descriptor for the image file at the given
 	 * plug-in relative path
-	 *
 	 * @param path the path
-	 * @return the image descriptor
-	 */
+	 * @return the image descriptor */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
