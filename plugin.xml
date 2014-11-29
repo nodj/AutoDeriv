@@ -68,9 +68,4 @@
             class="autoderiv.handlers.StartupHandler">
       </handler>
    </extension>
-   <extension
-         id="a"
-         name="a"
-         point="org.eclipse.core.resources.refreshProviders">
-   </extension>
 </plugin>
