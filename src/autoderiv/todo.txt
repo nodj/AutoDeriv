@@ -1,8 +1,9 @@
-[ ] test that a path within a folder (not project root) works
+[x] test that a path within a folder (not project root) works
 [x] handle comments (anything after '#')
 [x] handle leading/trailing whitespace
-[ ] handle '!' character (that negate the 'derived' attribute
-[ ] handle 'clear' command '> clear' that set everything to [not derived] state 
+[x] handle '!' character (that negate the 'derived' attribute
+[x] handle 'clear' command '> clear' that set everything to [not derived] state
+	> implemented as a simple classic '!/' rule 
 [ ] handle 'name-prefix' command '> name-prefix' that allows filtering on file name prefix. (if name startsWith...)
 [ ] handle 'extension' command '> extension' that allows filtering on extension basis
 [ ] handle 'regex' command '> regex' that allows complex formation for filtering

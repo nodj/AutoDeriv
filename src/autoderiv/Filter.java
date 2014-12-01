@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import autoderiv.rules.TreeRule;
@@ -28,8 +29,8 @@ public class Filter {
 		parseRules();
 	}
 
-	private void parseRule(String line){
-		info("Filter.parseRule() rule["+line+"]");
+	private void parseRule(String line, int linenumber){
+		info("Filter.parseRule() rule " + linenumber + " ["+line+"]");
 		
 		// filter out comments (after #char)
 		int commentLocation = line.indexOf('#');
@@ -38,16 +39,51 @@ public class Filter {
 		
 		// remove leading / trailing whitespace
 		line = line.trim();
+		if(line.length() == 0) return;
 		
 		info("usefull part line is : ["+line+"]");
-		Path p = new Path(line);
-		rules.add(new TreeRule(project, p, true));
+		
+		// line is a special line
+		if(line.startsWith(">")){
+//			line = line.substring(1).trim();
+			// command line. 
+//			if(line.startsWith("extension")){
+//				
+//			}
+//			rules.add(new XXXRule(project,...));
+			return;
+		}
+		
+		boolean setAsDerived = true;
+		if(line.startsWith("!")){
+			line = line.substring(1).trim();
+			setAsDerived =false;
+		}
+		
+		
+		// line is a simple path 
+		String path = project.getLocation().toPortableString()+Path.SEPARATOR+line;
+		File f = new File(path);
+		boolean isValidPath = true;
+		try {
+			f = f.getCanonicalFile();
+			path = f.getCanonicalPath();
+			warn(path);
+		} catch (IOException e) {
+			isValidPath = false;
+		}
+		if(isValidPath){
+			IPath p = new Path(path).makeRelativeTo(project.getLocation());
+			rules.add(new TreeRule(project, p, setAsDerived));
+			return;
+		}
+		
+		warn("no use for line "+linenumber+" ["+line+"]");
 	}
 
 	private void parseRules(){
 		rules.clear();
 		info("Filter.parseRules() Parsing rules");
-		// todo
 		File f = confFile.getLocation().toFile();
 		if(!f.exists()){
 			warn("Filter.parseRules() What ???");
@@ -66,8 +102,9 @@ public class Filter {
 
 		try {
 			String line = null;
+			int i = 0;
 			while ((line = br.readLine()) != null) 
-				parseRule(line);
+				parseRule(line, ++i);
 			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
