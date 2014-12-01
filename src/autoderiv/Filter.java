@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import autoderiv.rules.TreeRule;
@@ -31,7 +30,16 @@ public class Filter {
 
 	private void parseRule(String line){
 		info("Filter.parseRule() rule["+line+"]");
-
+		
+		// filter out comments (after #char)
+		int commentLocation = line.indexOf('#');
+		if(commentLocation != -1)
+			line = line.substring(0, commentLocation);
+		
+		// remove leading / trailing whitespace
+		line = line.trim();
+		
+		info("usefull part line is : ["+line+"]");
 		Path p = new Path(line);
 		rules.add(new TreeRule(project, p, true));
 	}
@@ -65,9 +73,7 @@ public class Filter {
 			e.printStackTrace();
 			return;
 		}
-
 	}
-
 
 	public void filterProject(IProgressMonitor progress){
 		for(Rule rule : rules){
@@ -91,23 +97,5 @@ public class Filter {
 		parseRules();
 	}
 
-	public boolean updateDerivedProperty(IResource res, IProgressMonitor progress) throws CoreException{
-		boolean resDerived = false; // replace with actual filtering
-
-
-		IPath ipath = res.getProjectRelativePath();
-		resDerived = ipath.toPortableString().startsWith(x);
-
-//		if(resDerived && !res.isDerived()){
-//			info("Filter.updateDerivedProperty() : "+res.getName() + " set DERIVED");
-//		}
-		res.setDerived(resDerived, progress);
-
-//		info("Filter.isDerived() toOSString "+ ipath.toOSString());
-//		info("Filter.isDerived() toString "+ ipath.toString());
-//		info("Filter.isDerived() toPortableString "+ ipath.toPortableString());
-
-		return resDerived;
-	}
 
 }
