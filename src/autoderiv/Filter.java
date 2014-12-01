@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,13 +33,7 @@ public class Filter {
 		System.out.println("Filter.parseRule() rule["+line+"]");
 		
 		Path p = new Path(line);
-		rules.add(new TreeRule(p, true));
-		IResource res = project.findMember(p, true);
-		if(res != null)
-		else{
-			System.out.println("Filter.parseRule() SHIT");
-			project.get
-		}
+		rules.add(new TreeRule(project, p, true));
 	}
 	
 	private void parseRules(){
