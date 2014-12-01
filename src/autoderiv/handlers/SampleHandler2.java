@@ -13,13 +13,14 @@ import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import autoderiv.Filter;
 
 /**@brief This class is the main IResourceChangeListener of the plug-in and must 
  * react, update properties, etc.
- * @author johan duparc (johan.duparc@gmail.com) */
+ * @author johan duparc (johan.duparc@gmail.com) 
+ * @todo fast exit if the project is not managed.
+ **/
 public class SampleHandler2 implements IResourceChangeListener{
 
 	public static final String	CONF_FILE_NAME	= ".derived";
@@ -31,7 +32,7 @@ public class SampleHandler2 implements IResourceChangeListener{
 		boolean confUpdated = false; 
 		IResource confFile = null;
 		ArrayList<IResource> added = new ArrayList<IResource>();
-		ArrayList<IResource> updated = new ArrayList<IResource>();
+//		ArrayList<IResource> updated = new ArrayList<IResource>();
 //		ArrayList<IResource> deleted (osef) = new ArrayList<IResource>();
 	}
 
@@ -42,27 +43,27 @@ public class SampleHandler2 implements IResourceChangeListener{
 
 
 		public boolean confFileEventHandler(VisitData v, IResourceDelta delta){
-			IResource res = delta.getResource();
-			IProject proj = res.getProject();
-			Filter f;
+			v.confFile = delta.getResource();
 
 			switch (delta.getKind()) {
+			case IResourceDelta.NO_CHANGE:
+				return false;
+			case IResourceDelta.ADDED_PHANTOM:
 			case IResourceDelta.ADDED:
 				System.out.println("SampleHandler2.MyDeltaVisitor.visit() EXCELENT ! the project is now conf");
 				v.confAdded = true; 
-				v.confFile = res;
 				break;
+			case IResourceDelta.REMOVED_PHANTOM:
 			case IResourceDelta.REMOVED:
 				System.out.println("SampleHandler2.MyDeltaVisitor.visit() No longer configured as AutoDeriv");
-				projectsFilter.remove(proj);
-				// TODO restore default state of all project files. (which is ?)
+				v.confDeleted = true; 
 				break;
 			case IResourceDelta.CHANGED:
-				f = projectsFilter.get(proj);
-				if(f!=null)
-					f.updateConf();
+				System.out.println("SampleHandler2.MyDeltaVisitor.confFileEventHandler() conf edited");
+				v.confUpdated = true;
 				break;
-				//FIXME other cases ???
+			default:
+				System.out.println("SampleHandler2.MyDeltaVisitor.confFileEventHandler(): CASE NOT HANDLED");
 			}
 			return true;
 		}
@@ -74,44 +75,28 @@ public class SampleHandler2 implements IResourceChangeListener{
 			boolean isProject = (res == proj);
 			boolean isWorkspace = (name.length()==0);
 
-			if(isProject)
-				System.out.println("SampleHandler2.MyDeltaVisitor.visit() ------------------------------------");
-
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
 				System.out.println("Resource " + res.getFullPath()+" was added.");
-				//TODO check if this pass the filter ! 
-				if(isProject) 	return true;	// project
-				if(isWorkspace) return true;	// workspace
-				return false; // as the conf file must be in the project folder
+				v.added.add(res);
+				return true;
 
 			case IResourceDelta.REMOVED:
-				System.out.print("Resource ");
-				System.out.print(res.getFullPath());
-				System.out.println(" was removed.");
-				if(isProject) 	return true;	// project
-				if(isWorkspace) return true;	// workspace
-				return false; // as the conf file must be in the project folder
+				System.out.println("Resource "+res.getFullPath()+" was removed.");
+				return isProject || isWorkspace; // so that we can see if the
 
 			case IResourceDelta.CHANGED:
-				System.out.print("Resource ");
-				System.out.print(res.getFullPath());
-				System.out.println(" has changed.");
-				Filter f = projectsFilter.get(proj);
-				if(f!=null){
-					WorkspaceJob wj = new WorkspaceJob("WorkspaceJob name ? see SmapleHandler2") {
-						@Override
-						public IStatus runInWorkspace(IProgressMonitor arg0) throws CoreException {
-							f.updateDerivedProperty(res, arg0);
-							return new Status(Status.OK, "AutoDeriv", "resource filtered");
-						}
-					};
-					wj.schedule();
-				}
-				return true;
-				//FIXME other cases ???
+				System.out.println("Resource "+res.getFullPath()+" was updated.");
+				return isProject || isWorkspace;
+
+			case IResourceDelta.ADDED_PHANTOM:
+			case IResourceDelta.REMOVED_PHANTOM:
+				break;
+
+			default:
+				System.out.println("SampleHandler2.MyDeltaVisitor.notConfFileEventHandler() case not implemented");
 			}
-			return true;
+			return true; // should not happend
 		}
 
 
@@ -121,9 +106,9 @@ public class SampleHandler2 implements IResourceChangeListener{
 			IProject proj = res.getProject();
 			// remove. DBG only
 			String name = res.getName();
-			System.out.println("SampleHandler2.MyDeltaVisitor.visit() res name:" + res.getName());
 
-			boolean isconfile = name.equals(CONF_FILE_NAME) && (res.getParent() == proj);
+			boolean isFile = (res.getType()==IResource.FILE);
+			boolean isconfile = isFile && name.equals(CONF_FILE_NAME) && (res.getParent() == proj);
 			// handle the resource
 			if(isconfile)
 				return confFileEventHandler(v, delta);
@@ -168,7 +153,6 @@ public class SampleHandler2 implements IResourceChangeListener{
 		for( IResourceDelta ac : delta.getAffectedChildren()){
 			IResource acRes = ac.getResource();
 			IProject acProj = acRes.getProject();
-			System.out.println("SampleHandler2.resourceChanged() proj name: " + acProj.getName() );
 
 			// should the visit happen in the workspacejob thread ? defered ?
 			VisitData v = new VisitData();
@@ -183,21 +167,22 @@ public class SampleHandler2 implements IResourceChangeListener{
 
 		// The delta visitor has now done its job : listing work to do.
 		// Now let apply the change in a compact way (only one WorkspaceJob if possible)
-		IProgressMonitor progress = new NullProgressMonitor(); // todo : better progress ?
-		
+//		IProgressMonitor progress = new NullProgressMonitor(); // todo : better progress ?
+
 		WorkspaceJob wj = new WorkspaceJob("WorkspaceJob name ? see SmapleHandler2") {
 			@Override
-			public IStatus runInWorkspace(IProgressMonitor arg0) throws CoreException {
+			public IStatus runInWorkspace(IProgressMonitor progress) throws CoreException {
 				for( Entry<IProject, VisitData> a : perProjectVisitData.entrySet()){
 					VisitData v = a.getValue();
 					IProject proj = a.getKey();
 					Filter f = projectsFilter.get(proj);
-					
+
+					// HANDLE CONF EDITION
 					if(v.confAdded){
 						// filter the whole project with the new conf
 						if (f != null) {
 							projectsFilter.remove(proj);
-							//TODO restore default state (all at 'not derived') ?
+							//TODO restore default state (all at 'not derived') before ?
 						}
 						f = new Filter(proj, v.confFile);
 						projectsFilter.put(proj, f);
@@ -208,9 +193,23 @@ public class SampleHandler2 implements IResourceChangeListener{
 							// TODO restore default project state.
 						}
 					}else if(v.confUpdated){
-						// TODO let the project's Filter decide
-
+						f = projectsFilter.get(proj);
+						if(f==null){
+							// fixme : initial state must prevent this case.
+							// for now, act like if the conf file is just added
+							f = new Filter(proj, v.confFile);
+							projectsFilter.put(proj, f);
+							f.filterProject(progress);
+						}
+						f.updateConf();
 					}
+
+					// HANDLE DATA EDITION
+
+					// this may not be a managed project
+					if(f==null) continue;
+
+					f.filterResources(v.added, progress);
 				}
 				return new Status(Status.OK, "AutoDeriv", "IResourceChangeEvent managed");
 			}
