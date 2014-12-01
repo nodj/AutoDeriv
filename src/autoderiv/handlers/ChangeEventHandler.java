@@ -217,4 +217,32 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		wj.schedule();
 
 	}
+
+
+
+	/**@brief manage the initial state. But don't waste time here. */
+	public void startup() {
+		/* For each project, check if it contains a conf file. Parse it, but 
+		 * don't update files as it is a pure waste of time. We consider that it
+		 * is already in a correct state.
+		 */
+
+		System.out.println("ChangeEventHandler.startup()");
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		for(IProject proj : workspace.getRoot().getProjects()){
+			IResource conf = proj.findMember(CONF_FILE_NAME);
+			System.out.println("ChangeEventHandler.startup() on project ["+proj.getName()+"]");
+			if(conf == null) continue;
+			System.out.println("ChangeEventHandler.startup() project configured with AutoDeriv");
+			Filter f = projectsFilter.get(proj);
+			if(f!=null){
+				projectsFilter.remove(proj); // dafuck?
+				System.out.println("ChangeEventHandler.startup() not expected at startup....");
+			}
+			f = new Filter(proj, conf);
+			projectsFilter.put(proj, f);
+			f.updateConf();
+		}
+	}
+
 }

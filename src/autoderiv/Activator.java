@@ -1,12 +1,11 @@
 package autoderiv;
 
-import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import autoderiv.handlers.SampleHandler2;
+import autoderiv.handlers.ChangeEventHandler;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -19,7 +18,7 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	private IWorkspace workspace;
-	IResourceChangeListener listener;
+	ChangeEventHandler listener;
 	
 	public Activator() {}
 
@@ -28,9 +27,9 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		
 		System.out.println("Activator.start()");
-		// TODO : manage the initial state. But don't waste time here.
 		workspace = ResourcesPlugin.getWorkspace();
-		listener = new SampleHandler2();
+		listener = new ChangeEventHandler();
+		listener.startup();
 		workspace.addResourceChangeListener(listener);
 		   
 		plugin = this;
