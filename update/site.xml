@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/AutoDeriveFeature_1.0.0.201412011625.jar" id="AutoDeriveFeature" version="1.0.0.201412011625">
+   <description name="AutoDeriv-update@github" url="http://nodj.github.io/AutoDeriv/update">
+      AutoDeriv update site on github
+   </description>
+   <feature url="features/net.nodj.AutoDerivFeature_1.0.0.201412011715.jar" id="net.nodj.AutoDerivFeature" version="1.0.0.201412011715">
       <category name="AutoDeriv"/>
    </feature>
-   <category-def name="AutoDeriv" label="AutoDeriv"/>
+   <category-def name="AutoDeriv" label="nodj&apos;s Eclipse plugins">
+      <description>
+         Eclipse IDE dev
+      </description>
+   </category-def>
 </site>
