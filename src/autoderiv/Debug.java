@@ -1,18 +1,17 @@
 package autoderiv;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 
 public class Debug {
-	public static boolean printDbg = true;
+//	public static boolean printDbg = true;
 	public static boolean printInfo = true;
 	public static boolean printWarn = true;
-	public static boolean printErr = true;
-	public static boolean printGlErr = true;
+//	public static boolean printErr = true;
+//	public static boolean printGlErr = true;
 	private static final String PREINFO = "i.";
 	private static final String PREWARN = "!.";
 //	private static final String PREERR = "ERROR.";
-	private static ArrayList<String> log = new ArrayList<String>();
+//	private static ArrayList<String> log = new ArrayList<String>();
 
 	
 	/**print an info text line (clickable from eclipse console) */

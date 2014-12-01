@@ -168,7 +168,6 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 		// The delta visitor has now done its job : listing work to do.
 		// Now let apply the change in a compact way (only one WorkspaceJob if possible)
-//		IProgressMonitor progress = new NullProgressMonitor(); // todo : better progress ?
 
 		WorkspaceJob wj = new WorkspaceJob("WorkspaceJob name ? see SmapleHandler2") {
 			@Override
@@ -188,12 +187,16 @@ public class ChangeEventHandler implements IResourceChangeListener{
 						f = new Filter(proj, v.confFile);
 						projectsFilter.put(proj, f);
 						f.filterProject(progress);
-					}else if(v.confDeleted){
+					}
+					
+					else if(v.confDeleted){
 						if (f != null) {
 							projectsFilter.remove(proj);
 							// TODO restore default project state.
 						}
-					}else if(v.confUpdated){
+					}
+					
+					else if(v.confUpdated){
 						f = projectsFilter.get(proj);
 						if(f==null){
 							// act like if the conf file is just added

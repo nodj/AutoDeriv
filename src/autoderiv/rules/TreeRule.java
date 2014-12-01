@@ -31,7 +31,6 @@ public class TreeRule implements Rule{
 		isDerived = d;
 		member = project.findMember(path);
 		
-		// remove
 		info("TreeRule created for path "+path);
 	}
 
