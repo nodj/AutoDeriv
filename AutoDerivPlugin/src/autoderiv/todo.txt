@@ -6,6 +6,6 @@
 	> implemented as a simple classic '!/' rule 
 [ ] handle 'name-prefix' command '> name-prefix' that allows filtering on file name prefix. (if name startsWith...)
 [ ] handle 'extension' command '> extension' that allows filtering on extension basis
-[ ] handle 'regex' command '> regex' that allows complex formation for filtering
+[ ] handle pattern matching that allows complex formation for filtering
 
 some command should be implemented as a menu button ?

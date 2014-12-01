@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension
+   <!--<extension
          point="org.eclipse.ui.commands">
       <category
             id="AutoDeriv.commands.category"
@@ -13,15 +13,17 @@
             id="AutoDeriv.commands.sampleCommand"
             name="Sample Command">
       </command>
-   </extension>
-   <extension
+   </extension>-->
+   
+   <!--<extension
          point="org.eclipse.ui.handlers">
       <handler
             commandId="AutoDeriv.commands.sampleCommand"
             class="autoderiv.handlers.SampleHandler">
       </handler>
-   </extension>
-   <extension
+   </extension>-->
+   
+   <!--<extension
          point="org.eclipse.ui.bindings">
       <key
             commandId="AutoDeriv.commands.sampleCommand"
@@ -29,8 +31,9 @@
             sequence="M1+6"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
-   </extension>
-   <extension
+   </extension>-->
+   
+   <!--<extension
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
@@ -57,10 +60,10 @@
             </command>
          </toolbar>
       </menuContribution>
-   </extension>
+   </extension>-->
    <extension
-         id="s"
-         name="s"
+         id="startup_handler"
+         name="startup handler"
          point="org.eclipse.ui.startup">
          
       <handler

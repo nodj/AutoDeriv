@@ -83,7 +83,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 			case IResourceDelta.REMOVED:
 				info("Resource "+res.getFullPath()+" was removed.");
-				return isProject || isWorkspace; // so that we can see if the
+				return isProject || isWorkspace; // so that we can see if the conf file was removed
 
 			case IResourceDelta.CHANGED:
 				info("Resource "+res.getFullPath()+" was updated.");
