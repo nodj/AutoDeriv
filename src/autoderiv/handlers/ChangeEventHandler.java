@@ -136,8 +136,9 @@ public class ChangeEventHandler implements IResourceChangeListener{
 			System.out.println("PRE_CLOSE"); 
 			break;
 		case IResourceChangeEvent.PRE_DELETE:
+			// when a project is delete
 			System.out.println("PRE_DELETE"); 
-			break;
+			return;
 		case IResourceChangeEvent.PRE_REFRESH:
 			System.out.println("PRE_REFRESH"); 
 			break;
