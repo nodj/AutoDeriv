@@ -21,7 +21,7 @@ import autoderiv.Filter;
  * @author johan duparc (johan.duparc@gmail.com) 
  * @todo fast exit if the project is not managed.
  **/
-public class SampleHandler2 implements IResourceChangeListener{
+public class ChangeEventHandler implements IResourceChangeListener{
 
 	public static final String	CONF_FILE_NAME	= ".derived";
 	HashMap<IProject, Filter> projectsFilter = new HashMap<IProject, Filter>();
@@ -32,7 +32,7 @@ public class SampleHandler2 implements IResourceChangeListener{
 		boolean confUpdated = false; 
 		IResource confFile = null;
 		ArrayList<IResource> added = new ArrayList<IResource>();
-//		ArrayList<IResource> updated = new ArrayList<IResource>();
+//		ArrayList<IResource> updated (osef) = new ArrayList<IResource>();
 //		ArrayList<IResource> deleted (osef) = new ArrayList<IResource>();
 	}
 
@@ -50,20 +50,20 @@ public class SampleHandler2 implements IResourceChangeListener{
 				return false;
 			case IResourceDelta.ADDED_PHANTOM:
 			case IResourceDelta.ADDED:
-				System.out.println("SampleHandler2.MyDeltaVisitor.visit() EXCELENT ! the project is now conf");
+				System.out.println("ChangeEventHandler.MyDeltaVisitor.visit() EXCELENT ! the project is now conf");
 				v.confAdded = true; 
 				break;
 			case IResourceDelta.REMOVED_PHANTOM:
 			case IResourceDelta.REMOVED:
-				System.out.println("SampleHandler2.MyDeltaVisitor.visit() No longer configured as AutoDeriv");
+				System.out.println("ChangeEventHandler.MyDeltaVisitor.visit() No longer configured as AutoDeriv");
 				v.confDeleted = true; 
 				break;
 			case IResourceDelta.CHANGED:
-				System.out.println("SampleHandler2.MyDeltaVisitor.confFileEventHandler() conf edited");
+				System.out.println("ChangeEventHandler.MyDeltaVisitor.confFileEventHandler() conf edited");
 				v.confUpdated = true;
 				break;
 			default:
-				System.out.println("SampleHandler2.MyDeltaVisitor.confFileEventHandler(): CASE NOT HANDLED");
+				System.out.println("ChangeEventHandler.MyDeltaVisitor.confFileEventHandler(): CASE NOT HANDLED");
 			}
 			return true;
 		}
@@ -87,16 +87,16 @@ public class SampleHandler2 implements IResourceChangeListener{
 
 			case IResourceDelta.CHANGED:
 				System.out.println("Resource "+res.getFullPath()+" was updated.");
-				return isProject || isWorkspace;
+				return true; // as we may encounter some addition later
 
 			case IResourceDelta.ADDED_PHANTOM:
 			case IResourceDelta.REMOVED_PHANTOM:
 				break;
 
 			default:
-				System.out.println("SampleHandler2.MyDeltaVisitor.notConfFileEventHandler() case not implemented");
+				System.out.println("ChangeEventHandler.MyDeltaVisitor.notConfFileEventHandler() case not implemented");
 			}
-			return true; // should not happend
+			return true; // should not happen
 		}
 
 
@@ -120,7 +120,7 @@ public class SampleHandler2 implements IResourceChangeListener{
 
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
-		System.out.println("SampleHandler2.resourceChanged() : " + event.toString());
+		System.out.println("ChangeEventHandler.resourceChanged() : " + event.toString());
 
 		switch(event.getType()){
 		case IResourceChangeEvent.POST_CHANGE:
@@ -146,7 +146,7 @@ public class SampleHandler2 implements IResourceChangeListener{
 			break;
 		}
 
-		HashMap<IProject, VisitData> perProjectVisitData = new HashMap<IProject, SampleHandler2.VisitData>();
+		HashMap<IProject, VisitData> perProjectVisitData = new HashMap<IProject, ChangeEventHandler.VisitData>();
 
 		// loop in order to work on a per-projects basis
 		IResourceDelta delta = event.getDelta();
@@ -154,7 +154,7 @@ public class SampleHandler2 implements IResourceChangeListener{
 			IResource acRes = ac.getResource();
 			IProject acProj = acRes.getProject();
 
-			// should the visit happen in the workspacejob thread ? defered ?
+			// should the visit happen in the WorkspaceJob thread ? Deferred ?
 			VisitData v = new VisitData();
 			perProjectVisitData.put(acProj, v);
 			try {
