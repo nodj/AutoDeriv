@@ -1,5 +1,6 @@
 package autoderiv;
 
+import static autoderiv.Debug.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +30,7 @@ public class Filter {
 	}
 
 	private void parseRule(String line){
-		System.out.println("Filter.parseRule() rule["+line+"]");
+		info("Filter.parseRule() rule["+line+"]");
 
 		Path p = new Path(line);
 		rules.add(new TreeRule(project, p, true));
@@ -37,11 +38,11 @@ public class Filter {
 
 	private void parseRules(){
 		rules.clear();
-		System.out.println("Filter.parseRules() Parsing rules");
+		info("Filter.parseRules() Parsing rules");
 		// todo
 		File f = confFile.getLocation().toFile();
 		if(!f.exists()){
-			System.out.println("Filter.parseRules() What ???");
+			warn("Filter.parseRules() What ???");
 			return; // weird...
 		}
 		FileInputStream fis;
@@ -69,7 +70,6 @@ public class Filter {
 
 
 	public void filterProject(IProgressMonitor progress){
-		System.out.println("Filter.filterProject()");
 		for(Rule rule : rules){
 			rule.applyOnProject(progress);
 		}
@@ -98,14 +98,14 @@ public class Filter {
 		IPath ipath = res.getProjectRelativePath();
 		resDerived = ipath.toPortableString().startsWith(x);
 
-		if(resDerived && !res.isDerived()){
-			System.out.println("Filter.updateDerivedProperty() : "+res.getName() + " set DERIVED");
-		}
+//		if(resDerived && !res.isDerived()){
+//			info("Filter.updateDerivedProperty() : "+res.getName() + " set DERIVED");
+//		}
 		res.setDerived(resDerived, progress);
 
-		System.out.println("Filter.isDerived() toOSString "+ ipath.toOSString());
-		System.out.println("Filter.isDerived() toString "+ ipath.toString());
-		System.out.println("Filter.isDerived() toPortableString "+ ipath.toPortableString());
+//		info("Filter.isDerived() toOSString "+ ipath.toOSString());
+//		info("Filter.isDerived() toString "+ ipath.toString());
+//		info("Filter.isDerived() toPortableString "+ ipath.toPortableString());
 
 		return resDerived;
 	}

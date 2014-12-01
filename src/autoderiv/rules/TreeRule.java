@@ -1,5 +1,6 @@
 package autoderiv.rules;
 
+import static autoderiv.Debug.*;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -31,9 +32,7 @@ public class TreeRule implements Rule{
 		member = project.findMember(path);
 		
 		// remove
-		System.out.println("TreeRule.TreeRule() for res "+path);
-		if(member!=null)
-			System.out.println("Yes !");
+		info("TreeRule created for path "+path);
 	}
 
 	public void applyOnProject(IProgressMonitor progress) {
@@ -61,9 +60,7 @@ public class TreeRule implements Rule{
 	@Override
 	public void applyOnResource(IResource res, IProgressMonitor progress) {
 		// initialization
-		System.out.println("TreeRule.applyOnResource() 61 rule : "+path); 
 		if(!checkIni()) return; 
-		System.out.println("TreeRule.applyOnResource() 62 res :  "+res.getLocation());
 		
 		// check if the resource is handled by the rule
 		boolean fits = false;
@@ -73,25 +70,23 @@ public class TreeRule implements Rule{
 			break;
 		case IResource.FOLDER :
 			IFolder f = (IFolder) member;
-			System.out.println("TreeRule.applyOnResource() a " + f.exists(res.getLocation()));
-			System.out.println("TreeRule.applyOnResource() b " + f.exists(res.getFullPath()));
+//			info("TreeRule.applyOnResource() a " + f.exists(res.getLocation()));
+//			info("TreeRule.applyOnResource() b " + f.exists(res.getFullPath()));
 			IPath rp = res.getProjectRelativePath();
 			IPath fp = f.getProjectRelativePath();
-			System.out.println("TreeRule.applyOnResource() c " + fp.isPrefixOf(rp));
-			System.out.println("TreeRule.applyOnResource() d " + (f.findMember(res.getLocation()) != null));
+//			info("TreeRule.applyOnResource() c " + fp.isPrefixOf(rp));
+//			info("TreeRule.applyOnResource() d " + (f.findMember(res.getLocation()) != null));
 			fits = fp.isPrefixOf(rp);			
 			break;
 		default:
 			// should not happen: resource is not supposed to be a project or /
-			System.out.println("TreeRule.applyOnResource() NOT HANDLED");
+			warn("TreeRule.applyOnResource() NOT HANDLED");
 		}
-		System.out.println("TreeRule.applyOnResource() 80 "+fits);
 		
 		// the resources matches the rule, apply derived attribute
 		if(fits){
 			try {
 				res.setDerived(isDerived, progress);
-				System.out.println("TreeRule.applyOnResource() 86");
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}

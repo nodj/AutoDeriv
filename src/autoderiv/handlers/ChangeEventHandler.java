@@ -1,5 +1,5 @@
 package autoderiv.handlers;
-
+import static autoderiv.Debug.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -52,20 +52,20 @@ public class ChangeEventHandler implements IResourceChangeListener{
 				return false;
 			case IResourceDelta.ADDED_PHANTOM:
 			case IResourceDelta.ADDED:
-				System.out.println("ChangeEventHandler.MyDeltaVisitor.visit() EXCELENT ! the project is now conf");
+				info("ChangeEventHandler.MyDeltaVisitor.visit() EXCELENT ! the project is now conf");
 				v.confAdded = true; 
 				break;
 			case IResourceDelta.REMOVED_PHANTOM:
 			case IResourceDelta.REMOVED:
-				System.out.println("ChangeEventHandler.MyDeltaVisitor.visit() No longer configured as AutoDeriv");
+				info("ChangeEventHandler.MyDeltaVisitor.visit() No longer configured as AutoDeriv");
 				v.confDeleted = true; 
 				break;
 			case IResourceDelta.CHANGED:
-				System.out.println("ChangeEventHandler.MyDeltaVisitor.confFileEventHandler() conf edited");
+				info("ChangeEventHandler.MyDeltaVisitor.confFileEventHandler() conf edited");
 				v.confUpdated = true;
 				break;
 			default:
-				System.out.println("ChangeEventHandler.MyDeltaVisitor.confFileEventHandler(): CASE NOT HANDLED");
+				warn("ChangeEventHandler.MyDeltaVisitor.confFileEventHandler(): CASE NOT HANDLED");
 			}
 			return true;
 		}
@@ -77,16 +77,16 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
-				System.out.println("Resource " + res.getFullPath()+" was added.");
+				info("Resource " + res.getFullPath()+" was added.");
 				v.added.add(res);
 				return true;
 
 			case IResourceDelta.REMOVED:
-				System.out.println("Resource "+res.getFullPath()+" was removed.");
+				info("Resource "+res.getFullPath()+" was removed.");
 				return isProject || isWorkspace; // so that we can see if the
 
 			case IResourceDelta.CHANGED:
-				System.out.println("Resource "+res.getFullPath()+" was updated.");
+				info("Resource "+res.getFullPath()+" was updated.");
 				return true; // as we may encounter some addition later
 
 			case IResourceDelta.ADDED_PHANTOM:
@@ -94,7 +94,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 				break;
 
 			default:
-				System.out.println("ChangeEventHandler.MyDeltaVisitor.notConfFileEventHandler() case not implemented");
+				warn("ChangeEventHandler.MyDeltaVisitor.notConfFileEventHandler() case not implemented");
 			}
 			return true; // should not happen
 		}
@@ -120,30 +120,30 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
-		System.out.println("ChangeEventHandler.resourceChanged() : " + event.toString());
+		info("ChangeEventHandler.resourceChanged() : " + event.toString());
 
 		switch(event.getType()){
 		case IResourceChangeEvent.POST_CHANGE:
-			System.out.println("POST_CHANGE"); 
+			info("POST_CHANGE"); 
 			break;
 		case IResourceChangeEvent.POST_BUILD:
-			System.out.println("POST_BUILD"); 
+			info("POST_BUILD"); 
 			break;
 		case IResourceChangeEvent.PRE_BUILD:
-			System.out.println("PRE_BUILD"); 
+			info("PRE_BUILD"); 
 			break;
 		case IResourceChangeEvent.PRE_CLOSE:
-			System.out.println("PRE_CLOSE"); 
+			info("PRE_CLOSE"); 
 			break;
 		case IResourceChangeEvent.PRE_DELETE:
 			// when a project is delete
-			System.out.println("PRE_DELETE"); 
+			info("PRE_DELETE"); 
 			return;
 		case IResourceChangeEvent.PRE_REFRESH:
-			System.out.println("PRE_REFRESH"); 
+			info("PRE_REFRESH"); 
 			break;
 		default:
-			System.out.println("default..."); 
+			info("default..."); 
 			break;
 		}
 
@@ -227,17 +227,17 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		 * is already in a correct state.
 		 */
 
-		System.out.println("ChangeEventHandler.startup()");
+		info("ChangeEventHandler.startup()");
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		for(IProject proj : workspace.getRoot().getProjects()){
 			IResource conf = proj.findMember(CONF_FILE_NAME);
-			System.out.println("ChangeEventHandler.startup() on project ["+proj.getName()+"]");
+			info("ChangeEventHandler.startup() on project ["+proj.getName()+"]");
 			if(conf == null) continue;
-			System.out.println("ChangeEventHandler.startup() project configured with AutoDeriv");
+			info("ChangeEventHandler.startup() project configured with AutoDeriv");
 			Filter f = projectsFilter.get(proj);
 			if(f!=null){
 				projectsFilter.remove(proj); // dafuck?
-				System.out.println("ChangeEventHandler.startup() not expected at startup....");
+				warn("ChangeEventHandler.startup() not expected at startup....");
 			}
 			f = new Filter(proj, conf);
 			projectsFilter.put(proj, f);

@@ -1,5 +1,6 @@
 package autoderiv;
 
+import static autoderiv.Debug.*;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -26,7 +27,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
-		System.out.println("Activator.start()");
+		info("Activator.start()");
 		workspace = ResourcesPlugin.getWorkspace();
 		listener = new ChangeEventHandler();
 		listener.startup();

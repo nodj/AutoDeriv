@@ -35,16 +35,18 @@ public class Debug {
 //	}
 
 	/**silently add a log line */
-	public static void log(String s) {
-		log.add(s);
-	}
-
-	/** dump the whole log */
-	public static void printLog() {
-		for (String s : log)
-			System.out.println(s);
-		log.clear();
-	}
+//NOT USED YET, BUT MAY BE USEFUL LATER
+	
+//	public static void log(String s) {
+//		log.add(s);
+//	}
+//
+//	/** dump the whole log */
+//	public static void printLog() {
+//		for (String s : log)
+//			System.out.println(s);
+//		log.clear();
+//	}
 
 	/** @return the caller line number */
 	public static int getLine() {
