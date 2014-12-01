@@ -199,9 +199,9 @@ public class ChangeEventHandler implements IResourceChangeListener{
 							// act like if the conf file is just added
 							f = new Filter(proj, v.confFile);
 							projectsFilter.put(proj, f);
-							f.filterProject(progress);
 						}
 						f.updateConf();
+						f.filterProject(progress);
 					}
 
 					// HANDLE DATA EDITION

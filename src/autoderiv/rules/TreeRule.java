@@ -61,17 +61,25 @@ public class TreeRule implements Rule{
 	@Override
 	public void applyOnResource(IResource res, IProgressMonitor progress) {
 		// initialization
-		if(!checkIni()) return;
-		System.out.println("TreeRule.applyOnResource() 65");
+		System.out.println("TreeRule.applyOnResource() 61 rule : "+path); 
+		if(!checkIni()) return; 
+		System.out.println("TreeRule.applyOnResource() 62 res :  "+res.getLocation());
+		
 		// check if the resource is handled by the rule
 		boolean fits = false;
-		switch(res.getType()){
+		switch(member.getType()){
 		case IResource.FILE :
 			fits = member.equals(res);
 			break;
 		case IResource.FOLDER :
-			IFolder f = (IFolder) res;
-			fits = f.findMember(res.getLocation()) != null;			
+			IFolder f = (IFolder) member;
+			System.out.println("TreeRule.applyOnResource() a " + f.exists(res.getLocation()));
+			System.out.println("TreeRule.applyOnResource() b " + f.exists(res.getFullPath()));
+			IPath rp = res.getProjectRelativePath();
+			IPath fp = f.getProjectRelativePath();
+			System.out.println("TreeRule.applyOnResource() c " + fp.isPrefixOf(rp));
+			System.out.println("TreeRule.applyOnResource() d " + (f.findMember(res.getLocation()) != null));
+			fits = fp.isPrefixOf(rp);			
 			break;
 		default:
 			// should not happen: resource is not supposed to be a project or /

@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -22,7 +21,7 @@ public class Filter {
 
 	String x = "derived";
 	ArrayList<Rule> rules = new ArrayList<Rule>();
-	
+
 	public Filter(IProject p, IResource r){
 		confFile = r;
 		project = p;
@@ -31,12 +30,13 @@ public class Filter {
 
 	private void parseRule(String line){
 		System.out.println("Filter.parseRule() rule["+line+"]");
-		
+
 		Path p = new Path(line);
 		rules.add(new TreeRule(project, p, true));
 	}
-	
+
 	private void parseRules(){
+		rules.clear();
 		System.out.println("Filter.parseRules() Parsing rules");
 		// todo
 		File f = confFile.getLocation().toFile();
@@ -51,10 +51,10 @@ public class Filter {
 			e.printStackTrace();
 			return;
 		}
-		 
+
 		//Construct BufferedReader from InputStreamReader
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-	 
+
 		try {
 			String line = null;
 			while ((line = br.readLine()) != null) 
@@ -64,40 +64,31 @@ public class Filter {
 			e.printStackTrace();
 			return;
 		}
-	 
+
 	}
 
-	private void filterResourceRec(IResource r, IProgressMonitor progress) throws CoreException{
-		updateDerivedProperty(r, progress);
-		if(r instanceof IFolder){
-			IFolder f = (IFolder) r;
-			for(IResource child : f.members()){
-				filterResourceRec(child, progress);
-			}
-		}
-	}
-	
-	public void filterResources(ArrayList<IResource> added, IProgressMonitor progress) throws CoreException{
-		for(IResource r : added){
-			updateDerivedProperty(r, progress);
-		}
-	}
 
 	public void filterProject(IProgressMonitor progress){
 		System.out.println("Filter.filterProject()");
-		try {
-			for(IResource r : project.members()){
-				filterResourceRec(r, progress);
-			}
-		} catch (CoreException e) {
-			e.printStackTrace();
+		for(Rule rule : rules){
+			rule.applyOnProject(progress);
 		}
 	}
 
+	public void filterResources(ArrayList<IResource> added, IProgressMonitor progress) throws CoreException{
+		for(IResource res : added){
+			for(Rule rule : rules){
+				rule.applyOnResource(res, progress);
+			}
+		}
+	}
+
+	/**just update the rules. 
+	 * @note Do NOT filter anything after the parsing, it must be explicitly 
+	 * asked. This is in order to minimize the work (load time) at startup. 
+	 */
 	public void updateConf(){
 		parseRules();
-		// TODO filter the whole project accordingly
-		
 	}
 
 	public boolean updateDerivedProperty(IResource res, IProgressMonitor progress) throws CoreException{
@@ -111,7 +102,7 @@ public class Filter {
 			System.out.println("Filter.updateDerivedProperty() : "+res.getName() + " set DERIVED");
 		}
 		res.setDerived(resDerived, progress);
-		
+
 		System.out.println("Filter.isDerived() toOSString "+ ipath.toOSString());
 		System.out.println("Filter.isDerived() toString "+ ipath.toString());
 		System.out.println("Filter.isDerived() toPortableString "+ ipath.toPortableString());
