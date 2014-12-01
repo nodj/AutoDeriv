@@ -9,6 +9,8 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -70,10 +72,8 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 		public boolean notConfFileEventHandler(VisitData v, IResourceDelta delta){
 			IResource res = delta.getResource();
-			IProject proj = res.getProject();
-			String name = res.getName();
-			boolean isProject = (res == proj);
-			boolean isWorkspace = (name.length()==0);
+			boolean isProject = (res.getType()==IResource.PROJECT);
+			boolean isWorkspace = (res.getType()==IResource.ROOT);
 
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
@@ -195,8 +195,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 					}else if(v.confUpdated){
 						f = projectsFilter.get(proj);
 						if(f==null){
-							// fixme : initial state must prevent this case.
-							// for now, act like if the conf file is just added
+							// act like if the conf file is just added
 							f = new Filter(proj, v.confFile);
 							projectsFilter.put(proj, f);
 							f.filterProject(progress);
