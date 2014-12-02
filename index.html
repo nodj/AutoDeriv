@@ -30,14 +30,15 @@
       <section>
         <div id="title">
           <h1>AutoDeriv</h1>
+          <p><strong>v1.1.0</strong></p>
           <p>Eclipse plugin that handle the derived state of resources from a textual file.</p>
-          <hr> 
-          <span class="credits left">Project maintained by <a href="https://github.com/nodj">nodj</a></span> 
-          <span class="credits right">Hosted on GitHub Pages — Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span> 
-        </div>
-        <h2><a id="autoderiv" class="anchor" href="#autoderiv" aria-hidden="true"><span class="octicon octicon-link"></span></a>AutoDeriv</h2>
-        <p><code>AutoDeriv</code> is an Eclipse plug-in that handle the 'derived' state of resources from a textual file in a similar way than .gitignore or svn ignore files work.<br> 
-        A file based filtering allows:</p>
+          <hr> <span class="credits left">Project maintained by <a href="https://github.com/nodj">nodj</a></span> <span
+            class="credits right">Hosted on GitHub Pages — Theme by <a
+              href="https://twitter.com/michigangraham">mattgraham</a></span> </div>
+        <h2><a id="autoderiv" class="anchor" href="#autoderiv" aria-hidden="true"><span
+              class="octicon octicon-link"></span></a>AutoDeriv</h2>
+        <p><code>AutoDeriv</code> is an Eclipse plug-in that handle the 'derived' state of resources from a textual file in a similar way than .gitignore or svn ignore files work.<br>
+          A file based filtering allows:</p>
         <ul>
           <li>easy sharing of the configuration through any versionning system</li>
           <li>no issue with automatic generation of resources, eclipse will avoid its edition</li>
@@ -53,7 +54,8 @@
           <li>not require additional, in-IDE configuration (except plug-in installation of course).</li>
         </ul>
         <br>
-        <h2><a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+        <h2><a id="install" class="anchor" href="#install" aria-hidden="true"><span
+              class="octicon octicon-link"></span></a>Install</h2>
         <p>First, we need to add the update site location so that eclipse can found the plugin.<br>
           Go to: <code>Windows </code>&gt; <code>Preference </code>&gt; <code>Install/Update</code> &gt; <code>Available Software Sites</code> <br>
           Click the <code>Add...</code> button, enter the following settings</p>
@@ -64,19 +66,23 @@
         Then, go to <code>Help</code> &gt; <code>Install new Software</code> &gt; <code>Work with:</code> and select this server.<br>
         The plugin should now appear in the list bellow. Follow the usual install process.<br>
         <code></code><br>
-        <h2><br></h2>
-        <h2><a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+        <h2><br>
+        </h2>
+        <h2><a id="usage" class="anchor" href="#usage" aria-hidden="true"><span
+              class="octicon octicon-link"></span></a>Usage</h2>
         <p>At the project root, create a <code>.derived</code> file:</p>
         <ul>
           <li> List the resources paths you want to set as derived, each on one line,</li>
           <li>Prefix a path with a <code>!</code> to set a resource as not derived,</li>
-          <li>comment a line (or a part of it) with a <code>#</code> symbol.<br></li>
+          <li>comment a line (or a part of it) with a <code>#</code> symbol.</li>
         </ul>
         <p>The file <code>.derived</code> in <code>workspace/project/</code> may look like</p>
         <pre><code># set the 'target' and 'ext' folders as derived<br>target<br>ext<br>src/include/version.h  #this file is auto-generated. Set as derived.<br><br># but don't affect the 'keep' sub-folder<br>!target/keep</code></pre>
         <p>This will instantly set the folders <code>ext</code> and <code>target</code> and all its element (files, sub-folders,...) to be considered as derived. The folder <code>target/keep</code> will not be concerned thanks to the second line starting with a <code>!</code>. In this example, the file <code>version.h</code> located in <code>src/include</code> will also be derived. This is nice for auto-generated files.</p>
-        <h2><br></h2>
-        <h2><a id="uninstall" class="anchor" href="#uninstall" aria-hidden="true"><span class="octicon octicon-link"></span></a>Uninstall</h2>
+        <h2><br>
+        </h2>
+        <h2><a id="uninstall" class="anchor" href="#uninstall" aria-hidden="true"><span
+              class="octicon octicon-link"></span></a>Uninstall</h2>
         <p>If this plugin doesn't help you, you can obviously uninstall it. Before that, you may want to clear all the attribute it has edited before. In order to do this easily, keep the <code>.derived</code> file, replace the whole content with one single line :</p>
         <pre><code>!/    # clear the whole project tree (set root as not derived)</code></pre>
         <p>Save the file in order that the update occurs, the whole project should now be clean. You can now delete the <code>.derived</code> file, and uninstall the plugin. Please let me know if something is wrong, if I can improve the plugin, I'll try my best.</p>
