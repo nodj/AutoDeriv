@@ -34,7 +34,7 @@ public class TreeRule implements Rule{
 		info("TreeRule created for path "+path);
 	}
 
-	public void applyOnProject(IProgressMonitor progress) {
+	public void applyOnProject(final IProgressMonitor progress) {
 		// initialization
 		if(!checkIni()) return;
 		
