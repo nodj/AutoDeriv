@@ -147,7 +147,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 			break;
 		}
 
-		HashMap<IProject, VisitData> perProjectVisitData = new HashMap<IProject, ChangeEventHandler.VisitData>();
+		final HashMap<IProject, VisitData> perProjectVisitData = new HashMap<IProject, ChangeEventHandler.VisitData>();
 
 		// loop in order to work on a per-projects basis
 		IResourceDelta delta = event.getDelta();
