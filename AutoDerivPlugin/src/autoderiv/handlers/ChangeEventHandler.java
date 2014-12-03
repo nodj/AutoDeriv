@@ -182,7 +182,6 @@ public class ChangeEventHandler implements IResourceChangeListener{
 						// filter the whole project with the new conf
 						if (f != null) {
 							projectsFilter.remove(proj);
-							//TODO restore default state (all at 'not derived') before ?
 						}
 						f = new Filter(proj, v.confFile);
 						projectsFilter.put(proj, f);
@@ -192,14 +191,14 @@ public class ChangeEventHandler implements IResourceChangeListener{
 					else if(v.confDeleted){
 						if (f != null) {
 							projectsFilter.remove(proj);
-							// TODO restore default project state.
 						}
 					}
 					
 					else if(v.confUpdated){
 						f = projectsFilter.get(proj);
 						if(f==null){
-							// act like if the conf file is just added
+							// act like if the conf file is just added. Should not happen
+							warn("should not happen");
 							f = new Filter(proj, v.confFile);
 							projectsFilter.put(proj, f);
 						}

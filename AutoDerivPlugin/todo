@@ -1,12 +1,12 @@
 expected for v1.2.0 
-[ ] handle pattern matching that allows complex formation for filtering
-[~] add logging to file
+[ ] add a global .derived file (#3)
+[x] handle pattern matching that allows complex formation for filtering
+[x] add logging to file
 [x] add contributor list 
 [x] add changelog 
 
 
 FUTURE =========================================================================
-[ ] add a global .derived file (#3)
 [ ] add optional decoration on derived resources
 [ ] better change analysis : avoid recursion on project not using AutoDeriv
 [-] handle 'name-prefix' command '> name-prefix' that allows filtering on file name prefix. (if name startsWith...)
