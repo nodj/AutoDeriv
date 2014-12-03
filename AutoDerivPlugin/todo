@@ -1,11 +1,24 @@
+expected for v1.2.0 
+[ ] handle pattern matching that allows complex formation for filtering
+[~] add logging to file
+[x] add contributor list 
+[x] add changelog 
+
+
+FUTURE =========================================================================
+[ ] add a global .derived file (#3)
+[ ] add optional decoration on derived resources
+[ ] better change analysis : avoid recursion on project not using AutoDeriv
+[-] handle 'name-prefix' command '> name-prefix' that allows filtering on file name prefix. (if name startsWith...)
+[-] handle 'extension' command '> extension' that allows filtering on extension basis
+some command should be implemented as a menu button ?
+
+
+DONE ===========================================================================
+v1.1.0
 [x] test that a path within a folder (not project root) works
 [x] handle comments (anything after '#')
 [x] handle leading/trailing whitespace
 [x] handle '!' character (that negate the 'derived' attribute
 [x] handle 'clear' command '> clear' that set everything to [not derived] state
-	> implemented as a simple classic '!/' rule 
-[ ] handle 'name-prefix' command '> name-prefix' that allows filtering on file name prefix. (if name startsWith...)
-[ ] handle 'extension' command '> extension' that allows filtering on extension basis
-[ ] handle pattern matching that allows complex formation for filtering
-
-some command should be implemented as a menu button ?
+	> implemented as a simple classic '!/' rule
