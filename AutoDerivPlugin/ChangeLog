@@ -2,11 +2,14 @@ formating:	see https://github.com/g-truc/glm/blob/master/readme.txt
 issues:		noted (#n), see https://github.com/nodj/AutoDeriv/issues/n
 
 ================================================================================
-AutoDeriv v1.2.0: 2014-12-?? 
+AutoDeriv v1.2.0: 2014-12-03 
 --------------------------------------------------------------------------------
 - Added CONTRIBUTORS
 - Added Changelog
 - better check of forbiden characters in windows path 
+- Fixed bug: bad attribute update if root rules is use.
+- log in [workspace]/.metadata/.log
+- Added Partern support : syntax at http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
 
 ================================================================================
 AutoDeriv v1.1.0: 2014-12-02 
