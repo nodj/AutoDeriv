@@ -32,6 +32,7 @@ public class Activator extends AbstractUIPlugin {
 		workspace.addResourceChangeListener(listener);
 
 		plugin = this;
+		Debug.log = plugin.getLog();
 	}
 
 	@Override
