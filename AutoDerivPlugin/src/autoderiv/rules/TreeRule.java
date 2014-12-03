@@ -20,10 +20,10 @@ import autoderiv.Rule;
 public class TreeRule implements Rule{
 
 	// the tree node which is designated by the rule.
-	IPath path;
-	boolean isDerived;
+	private IPath path;
+	private boolean isDerived;
 	private IResource	member;
-	IProject project;
+	private IProject project;
 
 	public TreeRule(IProject project, IPath specificRes, boolean setAsDerived){
 		this.project = project;
@@ -66,6 +66,10 @@ public class TreeRule implements Rule{
 		switch(member.getType()){
 		case IResource.FILE :
 			fits = member.equals(res);
+			break;
+		case IResource.PROJECT:
+		case IResource.ROOT:
+			fits = true;
 			break;
 		case IResource.FOLDER :
 			IFolder f = (IFolder) member;
