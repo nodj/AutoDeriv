@@ -63,7 +63,6 @@ public class Filter {
 
 		// line is a simple path 
 		String path = project.getLocation().toPortableString()+Path.SEPARATOR+line;
-		File f = new File(path);
 		boolean isValidPath = true;
 
 		
@@ -87,6 +86,7 @@ public class Filter {
 
 		if(isValidPath){
 			try {
+				File f = new File(path);
 				path = f.getCanonicalPath();
 				info("parsed path: "+path);
 			} catch (IOException e) {

@@ -25,13 +25,13 @@ public class TreeRule implements Rule{
 	private IResource	member;
 	IProject project;
 
-	public TreeRule(IProject project, IPath specificRes, boolean d){
+	public TreeRule(IProject project, IPath specificRes, boolean setAsDerived){
 		this.project = project;
 		path = specificRes;
-		isDerived = d;
+		isDerived = setAsDerived;
 		member = project.findMember(path);
 		
-		info("TreeRule created for path "+path);
+		info("TreeRule created for path /"+path);
 	}
 
 	public void applyOnProject(final IProgressMonitor progress) {

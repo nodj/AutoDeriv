@@ -20,19 +20,17 @@ public class Activator extends AbstractUIPlugin {
 	private static Activator plugin;
 	private IWorkspace workspace;
 	ChangeEventHandler listener;
-	
-	public Activator() {}
 
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
 		info("Activator.start()");
 		workspace = ResourcesPlugin.getWorkspace();
 		listener = new ChangeEventHandler();
 		listener.startup();
 		workspace.addResourceChangeListener(listener);
-		   
+
 		plugin = this;
 	}
 
