@@ -31,18 +31,18 @@ public class Filter {
 
 	private void parseRule(String line, int linenumber){
 		info("Filter.parseRule() rule " + linenumber + " ["+line+"]");
-		
+
 		// filter out comments (after #char)
 		int commentLocation = line.indexOf('#');
 		if(commentLocation != -1)
 			line = line.substring(0, commentLocation);
-		
+
 		// remove leading / trailing whitespace
 		line = line.trim();
 		if(line.length() == 0) return;
-		
+
 		info("usefull part line is : ["+line+"]");
-		
+
 		// line is a special line
 		if(line.startsWith(">")){
 //			line = line.substring(1).trim();
@@ -51,32 +51,56 @@ public class Filter {
 //				
 //			}
 //			rules.add(new XXXRule(project,...));
+			warn("commands not handled in this version");
 			return;
 		}
-		
+
 		boolean setAsDerived = true;
 		if(line.startsWith("!")){
 			line = line.substring(1).trim();
 			setAsDerived =false;
 		}
-		
-		
+
 		// line is a simple path 
 		String path = project.getLocation().toPortableString()+Path.SEPARATOR+line;
 		File f = new File(path);
 		boolean isValidPath = true;
-		try {
-			f = f.getCanonicalFile();
-			path = f.getCanonicalPath();
-			warn(path);
-		} catch (IOException e) {
-			isValidPath = false;
+
+		
+		/*
+		 * This part filter a rule so that illegal paths are not generating a 
+		 * TreeRule.
+		 * In order to keep a similar behavior for all OS, the restriction 
+		 * doesn't takes into account the fact that these chars are illegal on
+		 * windows only, and restrict their use in all cases. 
+		 * This may not be optimal... Any idea ?
+		 */
+		if(File.separatorChar == '\\'){ // Windows
+			String winBadChar = ":*?\"<>|"; // note / and \ are path separator, should stay allowed as path part
+			for(int i = 0; i< winBadChar.length(); i++){
+				if(line.indexOf(winBadChar.charAt(i))!=-1){
+					isValidPath = false;
+					break;
+				}
+			}
 		}
+
+		if(isValidPath){
+			try {
+				path = f.getCanonicalPath();
+				info("parsed path: "+path);
+			} catch (IOException e) {
+				isValidPath = false;
+			}
+		}
+
 		if(isValidPath){
 			IPath p = new Path(path).makeRelativeTo(project.getLocation());
 			rules.add(new TreeRule(project, p, setAsDerived));
 			return;
 		}
+		
+		//else, maybe its a regexp. Uses patterns
 		
 		warn("no use for line "+linenumber+" ["+line+"]");
 	}
