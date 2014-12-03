@@ -1,7 +1,9 @@
-AutoDeriv
-=========
+[AutoDeriv](http://nodj.github.io/AutoDeriv)
+============================================
 
-eclipse plug-in that handle the 'derived' state of resources from a textual file.
+### eclipse plug-in that handle the 'derived' state of resources from a textual file.
+
+[home](http://nodj.github.io/AutoDeriv)
 
 The goal is to manage derived resources in a similar way than .gitignore or svn ignore.
 A file based filtering allows:
