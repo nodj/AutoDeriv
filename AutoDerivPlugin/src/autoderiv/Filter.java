@@ -8,12 +8,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import autoderiv.rules.PatternRule;
 import autoderiv.rules.TreeRule;
 
 public class Filter {
@@ -65,7 +68,7 @@ public class Filter {
 		String path = project.getLocation().toPortableString()+Path.SEPARATOR+line;
 		boolean isValidPath = true;
 
-		
+
 		/*
 		 * This part filter a rule so that illegal paths are not generating a 
 		 * TreeRule.
@@ -99,9 +102,21 @@ public class Filter {
 			rules.add(new TreeRule(project, p, setAsDerived));
 			return;
 		}
+
+		//else, maybe its a regex. Uses Java Patterns with their syntax
+		//@see http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
+		try{
+			Pattern p = Pattern.compile(line); // can explode
+			rules.add(new PatternRule(project, p, setAsDerived));
+			return;
+		}catch(PatternSyntaxException e){
+			// todo if it start with a *, maybe it's a simple extension filter ?
+			
+			warn("in rule " + linenumber + ": bad regexp ("+ line +"): " + e.getMessage());
+		}
 		
-		//else, maybe its a regexp. Uses patterns
-		
+
+
 		warn("no use for line "+linenumber+" ["+line+"]");
 	}
 
