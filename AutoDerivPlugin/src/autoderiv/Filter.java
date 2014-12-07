@@ -106,7 +106,17 @@ public class Filter {
 		//else, maybe its a regex. Uses Java Patterns with their syntax
 		//@see http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
 		try{
-			Pattern p = Pattern.compile(line); // can explode
+			String regex = line;
+
+			/* Check if the rule starts with '*'. While this is not OK for the
+			 * java Pattern (this results in an exception), I think the user
+			 * expectation is that the '*' should match anything. In Java
+			 * Pattern, this is ".*" (instead of "*").
+			 * -> I prefix the rule with a dot in that case */
+			if(line.charAt(0)=='*') regex = "."+ line;
+
+			// creation of the effective rule
+			Pattern p = Pattern.compile(regex); // can explode
 			rules.add(new PatternRule(project, p, setAsDerived));
 			return;
 		}catch(PatternSyntaxException e){
