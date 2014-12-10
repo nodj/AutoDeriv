@@ -9,18 +9,19 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import autoderiv.Rule;
+import autoderiv.Tools;
 
 public class PatternRule implements Rule {
 	private IProject project;
 	private Pattern pattern;
 	private boolean isDerived;
-	
+
 	public PatternRule(IProject project, Pattern p, boolean setAsDerived) {
 		this.project = project;
 		pattern = p;
 		isDerived = setAsDerived;
 
-		info("PatternRule created for pattern \""+p.pattern() + '"');
+		info("PatternRule created for project "+project.getName()+", pattern \""+p.pattern() + '"');
 	}
 
 	@Override
@@ -30,9 +31,8 @@ public class PatternRule implements Rule {
 				@Override
 				public boolean visit(IResource res) throws CoreException {
 					Matcher m = pattern.matcher(res.getProjectRelativePath().toPortableString());
-					if(m.matches()){
-						res.setDerived(isDerived, progress);
-					}
+					if(m.matches())
+						Tools.checkedSetDerived(res, isDerived, progress);
 					return true;
 				}
 			});
@@ -42,11 +42,8 @@ public class PatternRule implements Rule {
 	@Override
 	public void applyOnResource(IResource res, IProgressMonitor progress) {
 		Matcher m = pattern.matcher(res.getProjectRelativePath().toPortableString());
-		if(m.matches()){
-			try {
-				res.setDerived(isDerived, progress);
-			} catch (CoreException e) { e.printStackTrace(); }
-		}
+		if(m.matches())
+			Tools.checkedSetDerived_nt(res, isDerived, progress);
 	}
 
 }

@@ -9,13 +9,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import autoderiv.Rule;
+import autoderiv.Tools;
 
-/**@brief this Rule is used when the conf file specify a folder which is 
+/**@brief this Rule is used when the conf file specify a folder which is
  * recursively derived.
  * Useful for build temp folder for example.
  * rule is like :
  * 		.obj
- * 		.dep 
+ * 		.dep
  */
 public class TreeRule implements Rule{
 
@@ -30,20 +31,20 @@ public class TreeRule implements Rule{
 		path = specificRes;
 		isDerived = setAsDerived;
 		member = project.findMember(path);
-		
-		info("TreeRule created for path /"+path);
+
+		info("TreeRule created for project "+project.getName()+", path "+IPath.SEPARATOR+path.toOSString());
 	}
 
 	public void applyOnProject(final IProgressMonitor progress) {
 		// initialization
 		if(!checkIni()) return;
-		
+
 		// effective action
 		try {
 			member.accept(new IResourceVisitor() {
 				@Override
 				public boolean visit(IResource res) throws CoreException {
-					res.setDerived(isDerived, progress);
+					Tools.checkedSetDerived(res, isDerived, progress);
 					return true;
 				}
 			});
@@ -51,16 +52,16 @@ public class TreeRule implements Rule{
 	}
 
 	boolean checkIni(){
-		if(member == null) 
+		if(member == null)
 			member = project.findMember(path);
-		return member != null && member.exists(); 
+		return member != null && member.exists();
 	}
-	
+
 	@Override
 	public void applyOnResource(IResource res, IProgressMonitor progress) {
 		// initialization
-		if(!checkIni()) return; 
-		
+		if(!checkIni()) return;
+
 		// check if the resource is handled by the rule
 		boolean fits = false;
 		switch(member.getType()){
@@ -79,21 +80,15 @@ public class TreeRule implements Rule{
 			IPath fp = f.getProjectRelativePath();
 //			info("TreeRule.applyOnResource() c " + fp.isPrefixOf(rp));
 //			info("TreeRule.applyOnResource() d " + (f.findMember(res.getLocation()) != null));
-			fits = fp.isPrefixOf(rp);			
+			fits = fp.isPrefixOf(rp);
 			break;
 		default:
 			// should not happen: resource is not supposed to be a project or /
 			warn("TreeRule.applyOnResource() NOT HANDLED");
 		}
-		
-		// the resources matches the rule, apply derived attribute
-		if(fits){
-			try {
-				res.setDerived(isDerived, progress);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
+		// the resources matches the rule, apply derived attribute
+		if(fits)
+			Tools.checkedSetDerived_nt(res, isDerived, progress);
+	}
 }
