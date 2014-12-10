@@ -30,7 +30,7 @@
       <section>
         <div id="title">
           <h1>AutoDeriv</h1>
-          <p><strong>v1.3.0</strong></p>
+          <p><code><strong>v1.3.0</strong></code></p>
           <p>Eclipse plugin that handle the derived state of resources from a textual file.</p>
           <hr> <span class="credits left">Project maintained by <a href="https://github.com/nodj">nodj</a></span> <span
             class="credits right">Hosted on GitHub Pages — Theme by <a
@@ -49,14 +49,15 @@
           It should:</p>
         <ul>
           <li>auto-detect which project of the workspace uses this functionality or not,</li>
-          <li>perform updates on the fly. No input required to the user,</li>
+          <li>perform updates on the fly. No input required from the user,</li>
           <li>perform update as fast as possible without slowing down the IDE or reducing UX,</li>
           <li>not require additional, in-IDE configuration (except plug-in installation of course).</li>
         </ul>
         <br>
         <h2><a id="install" class="anchor" href="#install" aria-hidden="true"><span
-              class="octicon octicon-link"></span></a>Install</h2>
-        <p>First, we need to add the update site location so that eclipse can found the plugin.<br>
+              class="octicon octicon-link"></span></a>Installation</h2>
+        <p>AutoDeriv is a classic Eclipse plugin, the installation process is also very classic.</p>
+        <p> First, we need to add the update site location so that eclipse can found the plugin.<br>
           Go to: <code>Windows </code>&gt; <code>Preference </code>&gt; <code>Install/Update</code> &gt; <code>Available Software Sites</code> <br>
           Click the <code>Add...</code> button, enter the following settings</p>
         <ul>
@@ -65,9 +66,9 @@
         </ul>
         Then, go to <code>Help</code> &gt; <code>Install new Software</code> &gt; <code>Work with:</code> and select this server.<br>
         The plugin should now appear in the list bellow. Follow the usual install process.<br>
-        <code></code><br>
-        <h2><br>
-        </h2>
+        <br>
+        <br>
+        <code></code>
         <h2><a id="usage" class="anchor" href="#usage" aria-hidden="true"><span
               class="octicon octicon-link"></span></a>Usage</h2>
         <p>At the project root, create a <code>.derived</code> file:</p>
@@ -77,16 +78,47 @@
           <li>comment a line (or a part of it) with a <code>#</code> symbol.</li>
         </ul>
         <p>The file <code>.derived</code> in <code>workspace/project/</code> may look like</p>
-        <pre><code># set the 'target' and 'ext' folders as derived<br>target<br>ext<br>src/include/version.h  #this file is auto-generated. Set as derived.<br><br># but don't affect the 'keep' sub-folder<br>!target/keep</code></pre>
-        <p>This will instantly set the folders <code>ext</code> and <code>target</code> and all its element (files, sub-folders,...) to be considered as derived. The folder <code>target/keep</code> will not be concerned thanks to the second line starting with a <code>!</code>. In this example, the file <code>version.h</code> located in <code>src/include</code> will also be derived. This is nice for auto-generated files.</p>
-        <h2><br>
-        </h2>
+        <pre><code><span style="color: #666666;"># set the 'target' and 'ext' folders as derived</span><br>target<br></code><br><code><code><span
+style="color: #666666;"># but don't affect the 'keep' sub-folder</span><br>!target/keep<br></code><br><span
+style="color: #666666;"># also set external dependencies as 'derived'</span><br>ext<br><br>src/include/version.h  <span
+style="color: #666666;"># this file is auto-generated. Set as derived.</span><br></code></pre>
+        <p>This will instantly set the folders <code>ext</code> and <code>target</code> and all its element (files, sub-folders,...) to be considered as derived. The folder <code>target/keep</code> will not be concerned thanks to the exclude rule starting with a <code>!</code> character. In this example, the file <code>version.h</code> located in <code>src/include</code> will also be derived. This is nice for auto-generated files.</p>
+        <br>
+        <h2><a id="examples" name="examples"></a>Examples</h2>
+        <p>The previous sample exposes the basics, it is enough for many applications. That being said, AutoDeriv wants to be more flexible. Here are some other rules that can be used.</p>
+        <h3><span>The root rule</span></h3>
+        <p>In order not to mess with the workspace, resources which are not subject to a rule have their derived flags manualy managed (this is the default Eclipse behaviour). </p>
+        <p>Sometime, it is preferable to have a well determined default status for every resources. To achieve this, prepend a <em>root rule</em>&nbsp; to your <code>.derived</code> file. A root rule is just a rule that affects the whole project tree by targeting the root folder ( aka <code>/</code> ). This is really useful, every <code>.derived</code> file I wrote starts that way.</p>
+        <pre><code><span style="color: #666666;"># set the 'root' folder as NOT derived</span><br><span
+style="color: #666666;"># by doing this, all resources </span><span style="color: #666666;">of the projec</span><span
+style="color: #666666;">t are NOT derived by default</span><span style="color: #666666;">.</span>
+!/<br><br><span style="color: #666666;"># other rules follows ...</span></code></pre>
+        <p>This way, all the resources status will be explicitly setted. Note that It is equally possible to set all the resources as derived, but I can't think of a scenario to handle this case...<br>
+        </p>
+        <h3>fnmatch style rules</h3>
+        <p>You may want to filter resources by extention. For instance, all the <code>.o</code> files of a specific folder should be derived. You can use simple regex to achieve that. Example:</p>
+        <pre><code><code>!/</code>    </code><code><code><code><span style="color: #666666;"></span></code></code><span
+style="color: #666666;">     # default status : NOT derived</span><br>*.o   </code><code><code><span
+style="color: #666666;"><code><span style="color: #666666;">     # object files are a product of compilation, set as derived. </span></code></span></code><br>doc/*.html <span
+style="color: #666666;"># html files from /doc/are generated. Not all project htmls.</span></code></pre>
+        <p>Note: the <code>*</code> matches sequence, the <code>?</code> character matches exactly one character.<br>
+        </p>
+        <h3>Master conf file</h3>
+        <p>You want a set of rules that is applyedto the whole workspace ? That is possible thanks to the <em>master conf file</em>. It is a standard <code>.derived</code> file that you put directly on the workspace root.</p>
+        <p>All the rules writen in that file will be considered for every projects, before the <em>local</em> rules.<br>
+        </p>
+        <h3>Decorations</h3>
+        <p>Since <code>v1.3.0</code>, the plugin uses the eclipse decoration system so that you can see instantly which resources are derived, which are not. This is very handy when you write <code>.derived</code> files as tou can see the effects as soon as you save the modification.</p>
+        <p>You may want to disable this in Eclipse preferences. Search for "decoration", or directly go to <code>Windows </code>&gt; <code>Preference </code>&gt; <code>General</code> &gt; <code>Appearance</code> &gt; <code><code>Label Decorations</code></code> From there, untick the <em>AutoDeriv Decorator</em>. This should disable decoration instantly.</p>
+        <p><br>
+        </p>
         <h2><a id="uninstall" class="anchor" href="#uninstall" aria-hidden="true"><span
               class="octicon octicon-link"></span></a>Uninstall</h2>
         <p>If this plugin doesn't help you, you can obviously uninstall it. Before that, you may want to clear all the attribute it has edited before. In order to do this easily, keep the <code>.derived</code> file, replace the whole content with one single line :</p>
-        <pre><code>!/    # clear the whole project tree (set root as not derived)</code></pre>
+        <pre><code>!/    <span style="color: #666666;"># clear the whole project tree (set root as not derived)</span></code></pre>
         <p>Save the file in order that the update occurs, the whole project should now be clean. You can now delete the <code>.derived</code> file, and uninstall the plugin. Please let me know if something is wrong, if I can improve the plugin, I'll try my best.</p>
-        <br>
+        <p><br>
+        </p>
       </section>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
