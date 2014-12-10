@@ -17,6 +17,16 @@ some command should be implemented as a menu button ?
 
 
 ================================================================================
+AutoDeriv v1.3.0: 2014-12-xx 
+--------------------------------------------------------------------------------
+- Added global .derived file, aka. Master Conf File (#3)
+- Added optional decoration on derived resources
+- Fixed: do not call setDerived when attribute is already OK
+- Modified: regex syntax more like fnmatch. Not perfect yet. Break old Patterns
+- Fixed managment of added/deleted project
+- Fixed: workspace check at startup
+
+--------------------------------------------------------------------------------
 AutoDeriv v1.2.0: 2014-12-03 
 --------------------------------------------------------------------------------
 - Added CONTRIBUTORS
@@ -26,20 +36,20 @@ AutoDeriv v1.2.0: 2014-12-03
 - log in [workspace]/.metadata/.log
 - Added Partern support : syntax at http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
 
-================================================================================
+--------------------------------------------------------------------------------
 AutoDeriv v1.1.0: 2014-12-02 
 --------------------------------------------------------------------------------
 - Support for Java 1.7 (#1)
 - .derived file "syntax" updated.
 - Updated update site
 
-================================================================================
+--------------------------------------------------------------------------------
 AutoDeriv v1.0.0: 2014-12-01 
 --------------------------------------------------------------------------------
 - Fully functionnal basics
 - Added update site
 
-================================================================================
+--------------------------------------------------------------------------------
 AutoDeriv v0.0.0: 2014-11-27
 --------------------------------------------------------------------------------
 - Project creation

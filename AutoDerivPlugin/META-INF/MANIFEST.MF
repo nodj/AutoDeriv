@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: AutoDeriv
-Bundle-SymbolicName: net.nodj.AutoDeriv;singleton:=true
-Bundle-Version: 1.2.0.qualifier
+Bundle-SymbolicName: net.nodj.AutoDerivPlugin;singleton:=true
+Bundle-Version: 1.3.0.qualifier
 Bundle-Activator: autoderiv.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.core.resources;bundle-version="3.9.1"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+ org.eclipse.core.resources;bundle-version="3.8.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: autoderiv,
  autoderiv.handlers,
