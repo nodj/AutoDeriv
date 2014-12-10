@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         id="startup_handler"
-         name="startup handler"
-         point="org.eclipse.ui.startup">
-      <startup
-            class="autoderiv.handlers.StartupHandler">
-      </startup>
-   </extension>
+
+	<extension
+		point="org.eclipse.ui.startup"
+		id="autoderiv.handlers.StartupHandler"
+		name="startup handler">
+		<startup
+			class="autoderiv.handlers.StartupHandler">
+		</startup>
+	</extension>
 </plugin>
