@@ -10,4 +10,20 @@
 			class="autoderiv.handlers.StartupHandler">
 		</startup>
 	</extension>
+
+	<extension
+		point="org.eclipse.ui.decorators">
+		<decorator
+			id="autoderiv.handlers.Decorator"
+			label="AutoDeriv Decorator"
+			state="true"
+			class= "autoderiv.handlers.Decorator"
+			adaptable="true"
+			lightweight="true">
+			<description>
+				This decorate resources with their "derived" attribute set.
+			</description>
+		</decorator>
+	</extension>
+
 </plugin>
