@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.resources.IProject;
@@ -20,20 +21,24 @@ import autoderiv.rules.PatternRule;
 import autoderiv.rules.TreeRule;
 
 public class Filter {
-	IResource confFile;
-	IProject project;
 
-	String x = "derived";
-	ArrayList<Rule> rules = new ArrayList<Rule>();
+	public static final String	CONF_FILE_NAME	= ".derived";
+	static private File masterConfFile;
+	private IResource localConfFile;
+	private IProject project;
+	private ArrayList<Rule> localRules = new ArrayList<Rule>();
+	private ArrayList<Rule> masterRules = new ArrayList<Rule>();
 
-	public Filter(IProject p, IResource r){
-		confFile = r;
+
+	public Filter(IProject p){
 		project = p;
-		parseRules();
+		localConfFile = project.findMember(CONF_FILE_NAME);
+		// do NOT parse here. Parsing is called explicitly.
 	}
 
-	private void parseRule(String line, int linenumber){
-		info("Filter.parseRule() rule " + linenumber + " ["+line+"]");
+	private static void parseRule(Collection<Filter> filters, boolean master, String line, int lineNumber){
+		info("Filter.parseRule() rule " + lineNumber + " ["+line+"]");
+		if(filters.isEmpty()) return;
 
 		// filter out comments (after #char)
 		int commentLocation = line.indexOf('#');
@@ -44,16 +49,20 @@ public class Filter {
 		line = line.trim();
 		if(line.length() == 0) return;
 
-		info("usefull part line is : ["+line+"]");
+		dbg("usefull part line is : ["+line+"]");
 
 		// line is a special line
 		if(line.startsWith(">")){
 //			line = line.substring(1).trim();
-			// command line. 
+			// command line.
 //			if(line.startsWith("extension")){
-//				
+//
 //			}
-//			rules.add(new XXXRule(project,...));
+//			if(line.startsWith("global.before.local")){
+//			}
+//			if(line.startsWith("global.after.local")){
+//			}
+//			localRules.add(new XXXRule(project,...));
 			warn("commands not handled in this version");
 			return;
 		}
@@ -64,17 +73,14 @@ public class Filter {
 			setAsDerived =false;
 		}
 
-		// line is a simple path 
-		String path = project.getLocation().toPortableString()+Path.SEPARATOR+line;
 		boolean isValidPath = true;
 
 
-		/*
-		 * This part filter a rule so that illegal paths are not generating a 
+		/* This part filter a rule so that illegal paths are not generating a
 		 * TreeRule.
-		 * In order to keep a similar behavior for all OS, the restriction 
+		 * In order to keep a similar behavior for all OS, the restriction
 		 * doesn't takes into account the fact that these chars are illegal on
-		 * windows only, and restrict their use in all cases. 
+		 * windows only, and restrict their use in all cases.
 		 * This may not be optimal... Any idea ?
 		 */
 		if(File.separatorChar == '\\'){ // Windows
@@ -89,21 +95,27 @@ public class Filter {
 
 		if(isValidPath){
 			try {
-				File f = new File(path);
-				path = f.getCanonicalPath();
-				info("parsed path: "+path);
+				String fakepath = filters.iterator().next().project.getLocation().append(line).toPortableString();
+				File f = new File(fakepath);
+				fakepath = f.getCanonicalPath();
 			} catch (IOException e) {
 				isValidPath = false;
 			}
 		}
 
+		// line is a simple path
 		if(isValidPath){
-			IPath p = new Path(path).makeRelativeTo(project.getLocation());
-			rules.add(new TreeRule(project, p, setAsDerived));
+			for(Filter filter : filters){
+				IProject proj = filter.project;
+				String path = proj.getLocation().toPortableString()+Path.SEPARATOR+line;
+				ArrayList<Rule> dest = master ? filter.masterRules : filter.localRules;
+				IPath p = new Path(path).makeRelativeTo(proj.getLocation());
+				dest.add(new TreeRule(proj, p, setAsDerived));
+			}
 			return;
 		}
 
-		//else, maybe its a regex. Uses Java Patterns with their syntax
+		//else, maybe its a regex. Uses Java Patterns with modified syntax
 		//@see http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
 		try{
 			String regex = line;
@@ -112,28 +124,46 @@ public class Filter {
 			 * java Pattern (this results in an exception), I think the user
 			 * expectation is that the '*' should match anything. In Java
 			 * Pattern, this is ".*" (instead of "*").
-			 * -> I prefix the rule with a dot in that case */
-			if(line.charAt(0)=='*') regex = "."+ line;
+			 * -> I replace any '*' by the '.*' sequence*/
+
+			regex = regex.replace("*", "##ANY_CHAR##");
+			regex = regex.replace(".", "##DOT_CHAR##");
+			regex = regex.replace("?", "##ONE_CHAR##");
+
+			regex = regex.replace("##ANY_CHAR##", ".*");
+			regex = regex.replace("##DOT_CHAR##", "[.]");
+			regex = regex.replace("##ONE_CHAR##", ".");
 
 			// creation of the effective rule
 			Pattern p = Pattern.compile(regex); // can explode
-			rules.add(new PatternRule(project, p, setAsDerived));
+//			for(Entry<IProject, ArrayList<Rule>> destEntry : filters){
+//				IProject proj = destEntry.getKey();
+//				ArrayList<Rule> dest = destEntry.getValue();
+//				dest.add(new PatternRule(proj, p, setAsDerived));
+//			}
+
+			for(Filter filter : filters){
+				IProject proj = filter.project;
+				ArrayList<Rule> dest = master ? filter.masterRules : filter.localRules;
+				dest.add(new PatternRule(proj, p, setAsDerived));
+			}
 			return;
 		}catch(PatternSyntaxException e){
-			// todo if it start with a *, maybe it's a simple extension filter ?
-			
-			warn("in rule " + linenumber + ": bad regexp ("+ line +"): " + e.getMessage());
+			warn("in rule " + lineNumber + ": bad regexp ("+ line +"): " + e.getMessage());
 		}
-		
 
-
-		warn("no use for line "+linenumber+" ["+line+"]");
+		warn("no use for line "+lineNumber+" ["+line+"]");
 	}
 
-	private void parseRules(){
-		rules.clear();
-		info("Filter.parseRules() Parsing rules");
-		File f = confFile.getLocation().toFile();
+
+	private void parseRules(File confFile, Filter filter, boolean master) {
+		ArrayList<Filter> filters = new ArrayList<Filter>();
+		filters.add(filter);
+		parseRules(confFile, filters, master);
+	}
+
+
+	private static void parseRules(File f, Collection<Filter> filters, boolean master){
 		if(!f.exists()){
 			warn("Filter.parseRules() What ???");
 			return; // weird...
@@ -152,8 +182,8 @@ public class Filter {
 		try {
 			String line = null;
 			int i = 0;
-			while ((line = br.readLine()) != null) 
-				parseRule(line, ++i);
+			while ((line = br.readLine()) != null)
+				parseRule(filters, master, line, ++i);
 			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -161,27 +191,65 @@ public class Filter {
 		}
 	}
 
+
+	/** parse master file for several Filter at once.
+	 * Avoid complex parsing operation to be performed once per project. This
+	 * allows parsing once per workspace */
+	public static void parseMasterRules(Collection<Filter> filters){
+		info("Filter.parseMasterRules() Parsing masterRules");
+
+		for(Filter filter : filters)
+			filter.masterRules.clear();
+
+		// no need to go further if the master file is not here
+		if(masterConfFile == null) return;
+
+		// effective load
+		parseRules(masterConfFile, filters, true);
+	}
+
+
 	public void filterProject(IProgressMonitor progress){
-		for(Rule rule : rules){
-			rule.applyOnProject(progress);
-		}
+		for(Rule rule : masterRules) rule.applyOnProject(progress);
+		for(Rule rule : localRules) rule.applyOnProject(progress);
 	}
 
 	public void filterResources(ArrayList<IResource> added, IProgressMonitor progress) throws CoreException{
 		for(IResource res : added){
-			for(Rule rule : rules){
-				rule.applyOnResource(res, progress);
-			}
+			for(Rule rule : masterRules) rule.applyOnResource(res, progress);
+			for(Rule rule : localRules) rule.applyOnResource(res, progress);
 		}
 	}
 
-	/**just update the rules. 
-	 * @note Do NOT filter anything after the parsing, it must be explicitly 
-	 * asked. This is in order to minimize the work (load time) at startup. 
+	/**just update the localRules.
+	 * @note Do NOT filter anything after the parsing, it must be explicitly
+	 * asked. This is in order to minimize the work (load time) at startup.
 	 */
-	public void updateConf(){
-		parseRules();
+	public void reparseLocalConf(){
+		localConfFile = project.findMember(CONF_FILE_NAME);
+
+		localRules.clear();
+		info("Filter.reparseLocalConf() Parsing localRules");
+		if(!hasLocalConf()) return;
+		File localConf = localConfFile.getLocation().toFile();
+
+		parseRules(localConf, this, false);
 	}
 
+
+	public static void setMasterConfFile(File f) {
+		masterConfFile = f;
+	}
+
+	public static boolean hasLocalConf(IProject proj) {
+		IResource conf = proj.findMember(Filter.CONF_FILE_NAME);
+		return conf != null;
+	}
+
+	public boolean hasLocalConf()
+	{ return localConfFile != null; }
+
+	public static boolean hasMasterConf()
+	{ return masterConfFile != null; }
 
 }
