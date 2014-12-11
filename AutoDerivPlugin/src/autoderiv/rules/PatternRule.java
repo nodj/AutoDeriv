@@ -8,13 +8,15 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import autoderiv.Rule;
+import autoderiv.IRule;
 import autoderiv.Tools;
 
-public class PatternRule implements Rule {
+/** This is the regex like rule.
+ * When user inputs things like '*.txt', the rule is handled by this class. */
+public class PatternRule implements IRule {
 	private IProject project;
-	private Pattern pattern;
-	private boolean isDerived;
+	private Pattern pattern;    // java Patter compiled
+	private boolean isDerived;  // are the resources that match the rule derived ?
 
 	public PatternRule(IProject project, Pattern p, boolean setAsDerived) {
 		this.project = project;

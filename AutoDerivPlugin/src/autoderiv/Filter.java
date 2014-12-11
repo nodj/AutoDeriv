@@ -23,14 +23,17 @@ import autoderiv.rules.TreeRule;
 
 public class Filter {
 
+	/** IProject on which the rule is applicable */
 	private IProject project;
 
+	/** Reference on the master conf file. Not sure if that comment is useful... Sorry readers */
 	private static File masterConfFile;
+	/** The local conf file (if any. It's possible that the filter exists just because of a master file) */
 	private IResource localConfFile;
 
-	private ArrayList<Rule> localRules = new ArrayList<Rule>();
-	private ArrayList<Rule> masterRules = new ArrayList<Rule>();
-
+	/** Rules are stored here. Two groups because of the order of application. */
+	private ArrayList<IRule> localRules = new ArrayList<IRule>();
+	private ArrayList<IRule> masterRules = new ArrayList<IRule>();
 
 
 	/**Create a Filter for this IProject
@@ -88,7 +91,7 @@ public class Filter {
 			for(Filter filter : filters){
 				IProject proj = filter.project;
 				String path = proj.getLocation().toPortableString()+Path.SEPARATOR+line;
-				ArrayList<Rule> dest = master ? filter.masterRules : filter.localRules;
+				ArrayList<IRule> dest = master ? filter.masterRules : filter.localRules;
 				IPath p = new Path(path).makeRelativeTo(proj.getLocation());
 				dest.add(new TreeRule(proj, p, setAsDerived));
 			}
@@ -104,7 +107,7 @@ public class Filter {
 
 			// add it to target(s)
 			for(Filter filter : filters){
-				ArrayList<Rule> dest = (master ? filter.masterRules : filter.localRules);
+				ArrayList<IRule> dest = (master ? filter.masterRules : filter.localRules);
 				dest.add(new PatternRule(filter.project, p, setAsDerived));
 			}
 			return;
@@ -210,8 +213,8 @@ public class Filter {
 
 	/**Filter the whole project */
 	public void filterProject(IProgressMonitor progress){
-		for(Rule rule : masterRules) rule.applyOnProject(progress);
-		for(Rule rule : localRules) rule.applyOnProject(progress);
+		for(IRule iRule : masterRules) iRule.applyOnProject(progress);
+		for(IRule iRule : localRules) iRule.applyOnProject(progress);
 	}
 
 
@@ -219,8 +222,8 @@ public class Filter {
 	 * No recursion here. */
 	public void filterResources(ArrayList<IResource> resources, IProgressMonitor progress){
 		for(IResource res : resources){
-			for(Rule rule : masterRules) rule.applyOnResource(res, progress);
-			for(Rule rule : localRules) rule.applyOnResource(res, progress);
+			for(IRule iRule : masterRules) iRule.applyOnResource(res, progress);
+			for(IRule iRule : localRules) iRule.applyOnResource(res, progress);
 		}
 	}
 

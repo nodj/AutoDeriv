@@ -4,6 +4,8 @@ import java.io.PrintStream;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Status;
 
+/** Prints, log...
+ * Just a tiny toolbox */
 public class Debug {
 	public static boolean printInfo = true;
 	private static final String PREINFO = "i.";

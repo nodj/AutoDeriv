@@ -8,17 +8,17 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import autoderiv.Rule;
+import autoderiv.IRule;
 import autoderiv.Tools;
 
-/**@brief this Rule is used when the conf file specify a folder which is
+/**@brief this IRule is used when the conf file specify a folder which is
  * recursively derived.
  * Useful for build temp folder for example.
  * rule is like :
  * 		.obj
  * 		.dep
  */
-public class TreeRule implements Rule{
+public class TreeRule implements IRule{
 
 	// the tree node which is designated by the rule.
 	private IPath path;
@@ -35,6 +35,7 @@ public class TreeRule implements Rule{
 		info("TreeRule created for project "+project.getName()+", path "+IPath.SEPARATOR+path.toOSString());
 	}
 
+	@Override
 	public void applyOnProject(final IProgressMonitor progress) {
 		// initialization
 		if(!checkIni()) return;
@@ -51,6 +52,9 @@ public class TreeRule implements Rule{
 		} catch (CoreException e) { e.printStackTrace(); }
 	}
 
+	/**This handles the fact that the filter may not have a real resource
+	 * linked, just a path.
+	 * @return true if the resource is active */
 	boolean checkIni(){
 		if(member == null)
 			member = project.findMember(path);
