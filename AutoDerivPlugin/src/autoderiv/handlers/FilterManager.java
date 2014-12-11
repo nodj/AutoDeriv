@@ -1,22 +1,25 @@
 package autoderiv.handlers;
 
 import static autoderiv.Debug.*;
+import java.util.Collection;
 import java.util.HashMap;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import autoderiv.Filter;
 
+/**This class handles the active Filters of the plugin.
+ * @author johan duparc (johan.duparc@gmail.com) */
 public class FilterManager {
-	public static final HashMap<IProject, Filter> projectsFilter = new HashMap<IProject, Filter>();
 
-	public static HashMap<IProject, Filter> getFilters(){
-		return projectsFilter;
-	}
+	/// ALL THE FILTERS |o/
+	private static final HashMap<IProject, Filter> projectsFilter = new HashMap<IProject, Filter>();
 
-	public static Filter getByProj(IProject proj){
-		return projectsFilter.get(proj);
-	}
+	public static Collection<Filter> getFilters()
+	{ return projectsFilter.values(); }
+
+	public static Filter getByProj(IProject proj)
+	{ return projectsFilter.get(proj); }
 
 	/** Create a Filter for every project. Used when a wild master conf file appears */
 	public static void filterForAll() {
@@ -50,6 +53,8 @@ public class FilterManager {
 			f.filterProject(progress);
 		}
 	}
+
+	public static boolean isEmpty() { return projectsFilter.isEmpty(); }
 
 
 

@@ -6,7 +6,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
-import autoderiv.Filter;
+import autoderiv.Cst;
 
 /**This class 'reads' the change event deltas, and fills structure (VisitData)
  * with much simpler information.
@@ -15,7 +15,10 @@ import autoderiv.Filter;
 public class MyDeltaVisitor implements IResourceDeltaVisitor{
 	VisitData v; ///< the structure that contains the result of the visitation
 
-	MyDeltaVisitor(VisitData v){ this.v = v; }
+	/**Create a Visitor that will read the changes (deltas)
+	 * @param changeDestination the structure in which we store the resumed information about the change
+	 */
+	MyDeltaVisitor(VisitData changeDestination){ v = changeDestination; }
 
 	/**Called when a local conf file is modified
 	 * @return true if we should visit the tree children */
@@ -54,8 +57,9 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 		switch (delta.getKind()) {
 		case IResourceDelta.ADDED:
 			if(res.getProject()==res){
-				warn("Project added !!!" + res.getFullPath());
+				dbg("Project added: " + res.getName());
 				v.projAdded = true;
+
 				// we have to parse the whole project later, no need to pursue here
 				return false;
 			}
@@ -65,14 +69,9 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 
 		case IResourceDelta.REMOVED:
 			return false;
-//			if(res.getProject()==res){
-//				warn("Project Removed !!!" + res.getFullPath());
-//			}
-//			info("Resource "+res.getFullPath()+" was removed.");
-//			return isProject || isWorkspace; // so that we can see if the conf file was removed
 
 		case IResourceDelta.CHANGED:
-//			info("Resource "+res.getFullPath()+" was updated.");
+			dbg("Resource "+res.getFullPath()+" was updated.");
 			return true; // as we may encounter some addition later
 
 		case IResourceDelta.ADDED_PHANTOM:
@@ -98,7 +97,7 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 		String name = res.getName();
 
 		boolean isFile = (res.getType()==IResource.FILE);
-		boolean isconfile = isFile && name.equals(Filter.CONF_FILE_NAME) && (res.getParent() == proj);
+		boolean isconfile = isFile && name.equals(Cst.CONF_FILE_NAME) && (res.getParent() == proj);
 		// handle the resource
 		if(isconfile)
 			return confFileEventHandler(v, delta);
