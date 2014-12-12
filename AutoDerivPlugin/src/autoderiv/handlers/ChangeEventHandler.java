@@ -33,6 +33,8 @@ public class ChangeEventHandler implements IResourceChangeListener{
 	/** used to check if master conf file is updated */
 	private static long previousMasterConfLastModified = 0;
 
+	Object mutex = new Object();
+
 	/**This is the main listener for this plugin. Any change on the workspace
 	 * will call this method. We have to be prompt in here, else the UI will
 	 * became less responsive. */
@@ -43,6 +45,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		if(event.getType()==IResourceChangeEvent.PRE_DELETE) return;
 
 		Debug.info("=====  ChangeEventHandler.resourceChanged() : " + event.toString() +"  =====");
+		Debug.dbg("");
 
 //		Just debug prints
 //		switch(event.getType()){
@@ -60,8 +63,21 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 
 		WorkspaceJob wj = new WorkspaceJob(Activator.PLUGIN_ID + " - On Change Event Update Job") {
+
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor progress) throws CoreException {
+				/* Well, this is not nice...
+				 * This avoids possible ConcurrentModificationException but
+				 * probably leads to unacceptable lag situations... */
+				synchronized (mutex) {
+					return doRunInWorkspace(progress);
+				}
+			}
+
+			public IStatus doRunInWorkspace(IProgressMonitor progress) throws CoreException {
+				progress.beginTask("Handle changes", 100);
+				progress.subTask("Prepare change scan...");
+				Debug.dbg("");
 				HashMap<IProject, VisitData> perProjectVisitData = new HashMap<IProject, VisitData>();
 
 				// loop in order to work on a per-projects basis
@@ -69,14 +85,19 @@ public class ChangeEventHandler implements IResourceChangeListener{
 				for (IResourceDelta ac : delta.getAffectedChildren()) {
 					// todo should the visit happen in the WorkspaceJob thread ? Deferred ?
 					VisitData v = new VisitData();
-					perProjectVisitData.put(ac.getResource().getProject(), v);
+					IProject proj = ac.getResource().getProject();
+					perProjectVisitData.put(proj , v);
 					try {
+						progress.subTask("scan for project "+proj.getName());
 						event.getDelta().accept(new MyDeltaVisitor(v));
 					} catch (CoreException e1) {
 						e1.printStackTrace();
 					}
 				}
 
+				progress.subTask("scan over.");
+				progress.worked(10);
+				Debug.dbg("");
 				// also, check for master file edition
 				final VisitData masterVisitData = handleMasterFile();
 
@@ -102,16 +123,18 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 					// for all managed projects, clear master rules (parsing null cause a clear)
 					Filter.setMasterConfFile(null);
-					Filter.parseMasterRules(FilterManager.getFilters());
+					Filter.parseMasterRules(FilterManager.getFilters(), progress);
 				}
+				Debug.dbg("");
 
+				progress.worked(10);
 
 				// handle project creation
 				ArrayList<Filter> addedProjecsFilter = new ArrayList<Filter>();
 				for (Entry<IProject, VisitData> a : perProjectVisitData.entrySet()) {
 					VisitData v = a.getValue();
 					IProject proj = a.getKey();
-					progressSub(progress,"Handle Creation of project "+proj.getName());
+					progress.subTask("Handle Creation of project "+proj.getName());
 
 					if(v.projAdded){
 						// handle master file
@@ -123,30 +146,33 @@ public class ChangeEventHandler implements IResourceChangeListener{
 					}
 				}
 
+				Debug.dbg("");
 				boolean masterUpdate = masterVisitData.confAdded || masterVisitData.confUpdated;
 				if(masterUpdate){
 					// update projects Filters
 					FilterManager.filterForAll();
-					progressSub(progress,"Parse master conf rules");
-					Filter.parseMasterRules(FilterManager.getFilters());
+					progress.subTask("Parse master conf rules");
+					Filter.parseMasterRules(FilterManager.getFilters(), progress);
 				}else{
 					// even if master file hasn't changed, update for new projects
 					if(!addedProjecsFilter.isEmpty())
-						Filter.parseMasterRules(addedProjecsFilter);
+						Filter.parseMasterRules(addedProjecsFilter, progress);
 				}
+				Debug.dbg("");
 
+				progress.worked(10);
 				// handle per project VisitData
 				for (Entry<IProject, VisitData> a : perProjectVisitData.entrySet()) {
 					VisitData v = a.getValue();
 					IProject proj = a.getKey();
-					progressSub(progress,"Apply updates for project "+proj.getName());
+					progress.subTask("Apply updates for project "+proj.getName());
 					Filter f = null;
 
 					// handle local configuration update
 					if(v.confAdded || v.confUpdated){
 						// filter the whole project with the new conf
 						f = FilterManager.getOrCreateFilter(proj);
-						f.reparseLocalConf();
+						f.reparseLocalConf(progress);
 						if(!masterUpdate){
 							// no need to update if the master conf is updated.
 							// These projects will be updated after
@@ -167,16 +193,21 @@ public class ChangeEventHandler implements IResourceChangeListener{
 						f.filterResources(v.added, progress);
 					}
 				}
+				Debug.dbg("");
+				progress.worked(10);
 
 				if(masterUpdate){
 					// apply updates
-					progressSub(progress, "Apply master conf update");
+					progress.subTask("Apply master conf update");
 					FilterManager.filterWorkspace(progress);
 				}else{
 					// even if master didn't changed, filter new projects
-					for(Filter f : addedProjecsFilter)
+					for(Filter f : addedProjecsFilter){
 						f.filterProject(progress);
+					}
 				}
+				Debug.dbg("");
+				progress.worked(10);
 
 				// handle decoration
 				// Decorate using current UI thread
@@ -187,17 +218,16 @@ public class ChangeEventHandler implements IResourceChangeListener{
 					}
 				});
 
+				progress.worked(10);
+
+				Debug.dbg("");
 				return new Status(Status.OK, "AutoDeriv", "IResourceChangeEvent managed");
 			}
 		};
+		Debug.dbg("");
 		wj.schedule();
+		Debug.dbg("");
 	}
-
-	/**minor helper function. I think this updates the UI, prints Debug.information
-	 * around the progress bars (in the Progression view)
-	 * @param string message we want to show */
-	private void progressSub(IProgressMonitor progress, String string)
-	{ progress.subTask(Activator.PLUGIN_ID + " - " +string); }
 
 
 	/**Handle the master conf file.
@@ -250,7 +280,10 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		WorkspaceJob wj = new WorkspaceJob(Activator.PLUGIN_ID + " - Startup Update Job") {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor progress) throws CoreException {
-				deferedStartup(progress);
+				progress.beginTask("startup", 100);
+				synchronized (mutex) {
+					deferedStartup(progress);
+				}
 				return new Status(Status.OK, "AutoDeriv", "Startup managed");
 			}
 		};
@@ -282,7 +315,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 			if(Filter.hasLocalConf(proj)){
 				Debug.info("ChangeEventHandler.deferedStartup() project configured with AutoDeriv");
 				Filter f = FilterManager.getOrCreateFilter(proj); // expected: Create only
-				f.reparseLocalConf();
+				f.reparseLocalConf(progress);
 			}
 		}
 
@@ -291,7 +324,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 			FilterManager.filterForAll();
 
 			// update projects Filters
-			Filter.parseMasterRules(FilterManager.getFilters());
+			Filter.parseMasterRules(FilterManager.getFilters(), progress);
 		}
 
 
