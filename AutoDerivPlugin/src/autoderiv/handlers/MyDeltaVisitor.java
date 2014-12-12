@@ -60,6 +60,8 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 
 
 		switch (delta.getKind()) {
+		case IResourceDelta.NO_CHANGE:
+			return false;
 		case IResourceDelta.ADDED:
 			if(isProject){
 				dbg("Project added: " + res.getName());
@@ -68,12 +70,12 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 				// we have to parse the whole project later, no need to pursue here
 				return false;
 			}
-//			info("Resource " + res.getFullPath()+" was added.");
+			dbg("Resource " + res.getFullPath()+" was added.");
 			v.added.add(res);
 			return true;
 
 		case IResourceDelta.REMOVED:
-			info("Resource " + res.getFullPath()+" was removed.");
+			dbg("Resource " + res.getFullPath()+" was removed.");
 			v.projDeleted = isProject;
 			return false;
 
@@ -86,9 +88,10 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 			if(isProject){
 				if((flags & IResourceDelta.OPEN) != 0){
 					if(proj.isOpen()){
+						info("Open proj: "+proj.getName());
 						v.projAdded = true;
-						info("Closed proj: "+proj.getName());
 					}else{
+						info("Closed proj: "+proj.getName());
 						v.projDeleted = true;
 					}
 					return false;
