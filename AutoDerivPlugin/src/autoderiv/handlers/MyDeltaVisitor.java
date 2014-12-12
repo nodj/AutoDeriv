@@ -51,12 +51,15 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 	 * @return true if we should visit tree children */
 	public boolean notConfFileEventHandler(VisitData v, IResourceDelta delta){
 		IResource res = delta.getResource();
-//		boolean isProject = (res.getType()==IResource.PROJECT);
+		IProject proj = res.getProject();
+		boolean isProject = (res==proj);
+		int flags = delta.getFlags();
 //		boolean isWorkspace = (res.getType()==IResource.ROOT);
+
 
 		switch (delta.getKind()) {
 		case IResourceDelta.ADDED:
-			if(res.getProject()==res){
+			if(isProject){
 				dbg("Project added: " + res.getName());
 				v.projAdded = true;
 

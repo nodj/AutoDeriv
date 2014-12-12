@@ -22,6 +22,7 @@ import autoderiv.Debug;
 import autoderiv.Filter;
 import autoderiv.Tools;
 
+
 /**@brief This class is the main IResourceChangeListener of the plug-in and must
  * react, update properties, etc.
  * @author johan duparc (johan.duparc@gmail.com)
@@ -40,14 +41,12 @@ public class ChangeEventHandler implements IResourceChangeListener{
 	 * became less responsive. */
 	@Override
 	public void resourceChanged(final IResourceChangeEvent event) {
-
 		// when a project is delete, quick exit as we don't care
 		if(event.getType()==IResourceChangeEvent.PRE_DELETE) return;
 		IResourceDelta delta = event.getDelta();
 		if(delta==null) return;
 
-		Debug.info("=====  ChangeEventHandler.resourceChanged() : " + event.toString() +"  =====");
-		Debug.dbg("");
+		Debug.dbg("=====  ChangeEventHandler.resourceChanged()  =====");
 
 //		Just debug prints
 //		switch(event.getType()){
@@ -120,7 +119,6 @@ public class ChangeEventHandler implements IResourceChangeListener{
 					Filter.setMasterConfFile(null);
 					Filter.parseMasterRules(FilterManager.getFilters(), progress);
 				}
-				Debug.dbg("");
 
 				progress.worked(10);
 
@@ -141,7 +139,6 @@ public class ChangeEventHandler implements IResourceChangeListener{
 					}
 				}
 
-				Debug.dbg("");
 				boolean masterUpdate = masterVisitData.confAdded || masterVisitData.confUpdated;
 				if(masterUpdate){
 					// update projects Filters
@@ -153,7 +150,6 @@ public class ChangeEventHandler implements IResourceChangeListener{
 					if(!addedProjecsFilter.isEmpty())
 						Filter.parseMasterRules(addedProjecsFilter, progress);
 				}
-				Debug.dbg("");
 
 				progress.worked(10);
 				// handle per project VisitData
@@ -188,7 +184,6 @@ public class ChangeEventHandler implements IResourceChangeListener{
 						f.filterResources(v.added, progress);
 					}
 				}
-				Debug.dbg("");
 				progress.worked(10);
 
 				if(masterUpdate){
@@ -201,7 +196,6 @@ public class ChangeEventHandler implements IResourceChangeListener{
 						f.filterProject(progress);
 					}
 				}
-				Debug.dbg("");
 				progress.worked(10);
 
 				// handle decoration
@@ -215,13 +209,10 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 				progress.worked(10);
 
-				Debug.dbg("");
 				return new Status(Status.OK, "AutoDeriv", "IResourceChangeEvent managed");
 			}
 		};
-		Debug.dbg("");
 		wj.schedule();
-		Debug.dbg("");
 	}
 
 
