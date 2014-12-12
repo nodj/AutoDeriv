@@ -197,22 +197,25 @@ public class Filter {
 
 	/** parse master file for several Filter objects at once.
 	 * Performs complex parsing once instead of once per Filter */
-	public static void parseMasterRules(Collection<Filter> filters){
+	public static void parseMasterRules(Collection<Filter> filters, IProgressMonitor progress){
 		info("Filter.parseMasterRules() Parsing masterRules");
 
-		for(Filter filter : filters)
+		for(Filter filter : filters){
 			filter.masterRules.clear();
+		}
 
 		// no need to go further if the master file is not here
 		if(!hasMasterConf()) return;
 
 		// effective load
+		progress.subTask("Parsing master conf file");
 		parseRules(masterConfFile, filters, true);
 	}
 
 
 	/**Filter the whole project */
 	public void filterProject(IProgressMonitor progress){
+		progress.subTask("filter project "+project.getName());
 		for(IRule iRule : masterRules) iRule.applyOnProject(progress);
 		for(IRule iRule : localRules) iRule.applyOnProject(progress);
 	}
@@ -221,6 +224,7 @@ public class Filter {
 	/**Important function that apply this filter on a specific resource.
 	 * No recursion here. */
 	public void filterResources(ArrayList<IResource> resources, IProgressMonitor progress){
+		progress.subTask("filter resources in project "+project.getName());
 		for(IResource res : resources){
 			for(IRule iRule : masterRules) iRule.applyOnResource(res, progress);
 			for(IRule iRule : localRules) iRule.applyOnResource(res, progress);
@@ -231,7 +235,7 @@ public class Filter {
 	/**just update the localRules.
 	 * @note Do NOT filter anything after the parsing, it must be explicitly
 	 * asked. This is in order to minimize the work (load time) at startup. */
-	public void reparseLocalConf(){
+	public void reparseLocalConf(IProgressMonitor progress){
 		dbg("Filter.reparseLocalConf() Parsing localRules");
 		localRules.clear();
 
@@ -240,6 +244,7 @@ public class Filter {
 		if(!hasLocalConf()) return;
 
 		// fill with the new rules
+		progress.subTask("parse local conf for project "+project.getName());
 		ArrayList<Filter> filters = new ArrayList<Filter>();
 		filters.add(this);
 		parseRules(localConfFile.getLocation().toFile(), filters, false);

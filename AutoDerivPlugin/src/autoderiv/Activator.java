@@ -25,8 +25,7 @@ public class Activator extends AbstractUIPlugin {
 
 		Debug.log = getLog();
 
-
-		Debug.printLog = false;
+		Debug.printLog = true;
 		Debug.printDbg = true;
 	}
 
