@@ -63,6 +63,21 @@ public class ChangeEventHandler implements IResourceChangeListener{
 //		default: Debug.info("default..."); break;
 //		}
 
+		final HashMap<IProject, VisitData> perProjectVisitData = new HashMap<IProject, VisitData>();
+
+		// loop in order to work on a per-projects basis
+		for (IResourceDelta ac : delta.getAffectedChildren()) {
+			// todo should the visit happen in the WorkspaceJob thread ? Deferred ?
+			VisitData v = new VisitData();
+			IProject proj = ac.getResource().getProject();
+			perProjectVisitData.put(proj , v);
+			try {
+//				progress.subTask("scan for project "+proj.getName());
+				event.getDelta().accept(new MyDeltaVisitor(v));
+			} catch (CoreException e1) {
+				e1.printStackTrace();
+			}
+		}
 
 		WorkspaceJob wj = new WorkspaceJob(Activator.PLUGIN_ID + " - On Change Event Update Job") {
 
@@ -78,28 +93,6 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 			public IStatus doRunInWorkspace(IProgressMonitor progress) throws CoreException {
 				progress.beginTask("Handle changes", 100);
-				progress.subTask("Prepare change scan...");
-				Debug.dbg("");
-				HashMap<IProject, VisitData> perProjectVisitData = new HashMap<IProject, VisitData>();
-
-				// loop in order to work on a per-projects basis
-				IResourceDelta delta = event.getDelta();
-				for (IResourceDelta ac : delta.getAffectedChildren()) {
-					// todo should the visit happen in the WorkspaceJob thread ? Deferred ?
-					VisitData v = new VisitData();
-					IProject proj = ac.getResource().getProject();
-					perProjectVisitData.put(proj , v);
-					try {
-						progress.subTask("scan for project "+proj.getName());
-						event.getDelta().accept(new MyDeltaVisitor(v));
-					} catch (CoreException e1) {
-						e1.printStackTrace();
-					}
-				}
-
-				progress.subTask("scan over.");
-				progress.worked(10);
-				Debug.dbg("");
 				// also, check for master file edition
 				final VisitData masterVisitData = handleMasterFile();
 
