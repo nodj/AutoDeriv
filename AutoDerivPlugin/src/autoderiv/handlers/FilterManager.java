@@ -23,8 +23,11 @@ public class FilterManager {
 
 	/** Create a Filter for every project. Used when a wild master conf file appears */
 	public static void filterForAll() {
-		for(IProject proj : ResourcesPlugin.getWorkspace().getRoot().getProjects())
-			getOrCreateFilter(proj);
+		for (IProject proj : ResourcesPlugin.getWorkspace().getRoot().getProjects())
+			if (!proj.isOpen())
+				continue;
+			else
+				getOrCreateFilter(proj);
 	}
 
 	/**Return this project Filter. Creates it if necessary.

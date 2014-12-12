@@ -77,6 +77,20 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 
 		case IResourceDelta.CHANGED:
 			dbg("Resource "+res.getFullPath()+" was updated.");
+			// project opening ? closing ?
+			if(isProject){
+				if((flags & IResourceDelta.OPEN) != 0){
+					if(proj.isOpen()){
+						v.projAdded = true;
+						info("Closed proj: "+proj.getName());
+					}else{
+						v.projDeleted = true;
+					}
+					return false;
+				}
+			}
+
+
 			return true; // as we may encounter some addition later
 
 		case IResourceDelta.ADDED_PHANTOM:

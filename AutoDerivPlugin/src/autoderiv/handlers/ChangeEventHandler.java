@@ -301,6 +301,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		 * Todo possibility to disable startup overall update
 		 */
 		for(IProject proj : ResourcesPlugin.getWorkspace().getRoot().getProjects()){
+			if(!proj.isOpen()) continue;
 			Debug.dbg("ChangeEventHandler.deferedStartup() on project ["+proj.getName()+"]");
 			if(Filter.hasLocalConf(proj)){
 				Debug.info("ChangeEventHandler.deferedStartup() project configured with AutoDeriv");
