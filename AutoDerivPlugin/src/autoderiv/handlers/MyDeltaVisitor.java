@@ -53,6 +53,8 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 		IResource res = delta.getResource();
 		IProject proj = res.getProject();
 		boolean isProject = (res==proj);
+		boolean isFile = (res.getType()==IResource.FILE);
+
 		int flags = delta.getFlags();
 //		boolean isWorkspace = (res.getType()==IResource.ROOT);
 
@@ -76,7 +78,10 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 			return false;
 
 		case IResourceDelta.CHANGED:
-			dbg("Resource "+res.getFullPath()+" was updated.");
+			if(isFile) return false;
+			if(flags!=0)
+				dbg("Resource "+res.getFullPath()+" was updated." + flags);
+
 			// project opening ? closing ?
 			if(isProject){
 				if((flags & IResourceDelta.OPEN) != 0){
