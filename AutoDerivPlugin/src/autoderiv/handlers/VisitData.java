@@ -22,4 +22,10 @@ public class VisitData{
 		sb.append(", projAdded:").append(projAdded);
 		return sb.toString();
 	}
+
+	public boolean somethingToDo() {
+		return (added.size()>0) || confUpdated || confAdded || confDeleted || projAdded || projDeleted ;
+	}
+
+	public boolean nothingToDo() { return !somethingToDo(); }
 }

@@ -69,15 +69,31 @@ public class ChangeEventHandler implements IResourceChangeListener{
 			// todo should the visit happen in the WorkspaceJob thread ? Deferred ?
 			VisitData v = new VisitData();
 			IProject proj = ac.getResource().getProject();
-			perProjectVisitData.put(proj , v);
 			try {
 //				progress.subTask("scan for project "+proj.getName());
 				event.getDelta().accept(new MyDeltaVisitor(v));
 			} catch (CoreException e1) {
 				e1.printStackTrace();
 			}
+
+			// add the task to the list
+			if(v.somethingToDo())
+				perProjectVisitData.put(proj , v);
 		}
 
+		// also, check for master file edition
+		final VisitData masterVisitData = handleMasterFile();
+
+		// check if we could avoid the workspace job
+		boolean nothingToDo = masterVisitData.nothingToDo() && perProjectVisitData.isEmpty();
+		if(nothingToDo){
+			Debug.dbg("Nothing to do for this change =)");
+			return;
+		}else{
+			Debug.dbg("Launch a new Workspace job for this change");
+		}
+
+		// create the asynchronous working task.
 		WorkspaceJob wj = new WorkspaceJob(Activator.PLUGIN_ID + " - On Change Event Update Job") {
 
 			@Override
@@ -85,15 +101,17 @@ public class ChangeEventHandler implements IResourceChangeListener{
 				/* Well, this is not nice...
 				 * This avoids possible ConcurrentModificationException but
 				 * probably leads to unacceptable lag situations... */
+				Debug.dbg("Workspace job start");
+				IStatus status;
 				synchronized (mutex) {
-					return doRunInWorkspace(progress);
+					status = doRunInWorkspace(progress);
 				}
+				Debug.dbg("Workspace job stop");
+				return status;
 			}
 
 			public IStatus doRunInWorkspace(IProgressMonitor progress) throws CoreException {
 				progress.beginTask("Handle changes", 100);
-				// also, check for master file edition
-				final VisitData masterVisitData = handleMasterFile();
 
 				// The delta visitor has now done its job : listing work to do.
 				// Now let apply the change in a compact way (only one WorkspaceJob if possible)
