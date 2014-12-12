@@ -71,6 +71,8 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 			return true;
 
 		case IResourceDelta.REMOVED:
+			info("Resource " + res.getFullPath()+" was removed.");
+			v.projDeleted = isProject;
 			return false;
 
 		case IResourceDelta.CHANGED:

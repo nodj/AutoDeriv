@@ -171,6 +171,10 @@ public class ChangeEventHandler implements IResourceChangeListener{
 						}
 					}
 
+					else if(v.projDeleted){
+						FilterManager.deleteFilter(proj);
+					}
+
 					else if(v.confDeleted){
 						if(Filter.hasMasterConf()){
 							FilterManager.deleteFilter(proj);

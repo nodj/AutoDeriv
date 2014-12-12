@@ -8,7 +8,8 @@ public class VisitData{
 	boolean confAdded = false;    // set to true when a conf file is added to a Project
 	boolean confDeleted = false;  // set to true when a conf file is deleted
 	boolean confUpdated = false;  // set to true when a conf file is modified
-	boolean projAdded = false;    // set to true when a Project is added to the workspace
+	boolean projAdded = false;    // set to true when a Project is added to the workspace or opened
+	boolean	projDeleted = false;  // set to true when a Project is removed to the workspace or closed
 
 	ArrayList<IResource> added = new ArrayList<IResource>();  // list of added resources to be handled
 
