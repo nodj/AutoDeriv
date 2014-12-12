@@ -43,6 +43,8 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 		// when a project is delete, quick exit as we don't care
 		if(event.getType()==IResourceChangeEvent.PRE_DELETE) return;
+		IResourceDelta delta = event.getDelta();
+		if(delta==null) return;
 
 		Debug.info("=====  ChangeEventHandler.resourceChanged() : " + event.toString() +"  =====");
 		Debug.dbg("");

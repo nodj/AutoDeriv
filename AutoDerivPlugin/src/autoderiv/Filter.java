@@ -236,6 +236,9 @@ public class Filter {
 	 * @note Do NOT filter anything after the parsing, it must be explicitly
 	 * asked. This is in order to minimize the work (load time) at startup. */
 	public void reparseLocalConf(IProgressMonitor progress){
+		// todo hash useful text parts,
+		// return if hash == old hash
+
 		dbg("Filter.reparseLocalConf() Parsing localRules");
 		localRules.clear();
 
