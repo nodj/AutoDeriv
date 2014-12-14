@@ -8,9 +8,6 @@ import autoderiv.handlers.ChangeEventHandler;
 
 /** The activator class controls the plug-in life cycle */
 public class Activator extends AbstractUIPlugin {
-
-	public static final String PLUGIN_ID = "AutoDeriv";
-
 	// The shared instance
 	ChangeEventHandler listener;
 

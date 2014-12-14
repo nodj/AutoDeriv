@@ -15,7 +15,7 @@
 		point="org.eclipse.ui.decorators">
 		<decorator
 			id="autoderiv.handlers.Decorator"
-			label="AutoDeriv Decorator"
+			label="AutoDeriv: decorate derived resources"
 			state="true"
 			class= "autoderiv.handlers.Decorator"
 			adaptable="true"
