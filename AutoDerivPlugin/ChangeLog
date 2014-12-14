@@ -4,7 +4,6 @@ issues:		noted (#n), see https://github.com/nodj/AutoDeriv/issues/n
 ================================================================================
 AutoDeriv TODO list 
 --------------------------------------------------------------------------------
-[x] add usage examples, explain the !/, the patterns...
 [ ] hash useful part of rule, compare this hash before reparsing
 [ ] make use of IProgress.isCanceled method ?
 [ ] handle conf files with zero rules - especially master
@@ -12,7 +11,6 @@ AutoDeriv TODO list
 [ ] command 'post' & 'pre' for the global .derived file
 [ ] command to disable [Pattern -> fnmatch] regex syntax conversion
 [ ] add info, warn, err for .derived files
-[ ] better change analysis : avoid recursion on project not using AutoDeriv
 some command should be implemented as a menu button ?
 ================================================================================
 
@@ -26,6 +24,8 @@ AutoDeriv v1.3.1: 2014-12-?? [wait the git tag]
 - Fixed handling of project status: closed vs open
 - Added basic plugin configuration. See "autoderiv.ini" part in the home site
   - Customizable decoration prefix, suffix, background and foreground colors.
+  - Customizable logging
+  - workspace startup check can be disabled.
 - several internal modification without -in theory- visible effects:
   - Fixed ConcurentModificationException: Prevent parallel execution of
     changeEvent listener

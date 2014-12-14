@@ -47,25 +47,24 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 		Debug.dbg("=====  ChangeEventHandler.resourceChanged()  =====");
 
-//		Just debug prints
-//		switch(event.getType()){
-//		case IResourceChangeEvent.POST_CHANGE: Debug.info("POST_CHANGE"); break;
-//		case IResourceChangeEvent.POST_BUILD: Debug.info("POST_BUILD"); break;
-//		case IResourceChangeEvent.PRE_BUILD: Debug.info("PRE_BUILD"); break;
-//		case IResourceChangeEvent.PRE_CLOSE: Debug.info("PRE_CLOSE"); break;
-//		case IResourceChangeEvent.PRE_DELETE:
-//			// when a project is delete
-//			Debug.info("PRE_DELETE");
-//			return;
-//		case IResourceChangeEvent.PRE_REFRESH: Debug.info("PRE_REFRESH"); break;
-//		default: Debug.info("default..."); break;
-//		}
+		// Just debug prints
+		switch(event.getType()){
+		case IResourceChangeEvent.POST_CHANGE: Debug.dbg("POST_CHANGE"); break;
+		case IResourceChangeEvent.POST_BUILD: Debug.dbg("POST_BUILD"); break;
+		case IResourceChangeEvent.PRE_BUILD: Debug.dbg("PRE_BUILD"); break;
+		case IResourceChangeEvent.PRE_CLOSE: Debug.dbg("PRE_CLOSE"); break;
+		case IResourceChangeEvent.PRE_DELETE:
+			// when a project is delete
+			Debug.dbg("PRE_DELETE");
+			return;
+		case IResourceChangeEvent.PRE_REFRESH: Debug.dbg("PRE_REFRESH"); break;
+		default: Debug.dbg("default... What ?"); break;
+		}
 
 		final HashMap<IProject, VisitData> perProjectVisitData = new HashMap<IProject, VisitData>();
 
 		// loop in order to work on a per-projects basis
 		for (IResourceDelta ac : delta.getAffectedChildren()) {
-			// todo should the visit happen in the WorkspaceJob thread ? Deferred ?
 			VisitData v = new VisitData();
 			IProject proj = ac.getResource().getProject();
 			try {
@@ -321,7 +320,6 @@ public class ChangeEventHandler implements IResourceChangeListener{
 
 		/* For each project, check if it contains a conf file. Parse it, but
 		 * don't update files as it is a pure waste of time.
-		 * Todo possibility to disable startup overall update
 		 */
 		for(IProject proj : ResourcesPlugin.getWorkspace().getRoot().getProjects()){
 			if(!proj.isOpen()) continue;
@@ -342,9 +340,8 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		}
 
 
-// todo if(userAcceptsAStartupCheck)
-		// I hope this is not too long...
-		FilterManager.filterWorkspace(progress);
+		if(Cst.OPTION_STARTUP_CHECK)
+			FilterManager.filterWorkspace(progress);
 
 		double startupEnd = Tools.getmsd();
 		Debug.info("ChangeEventHandler.deferedStartup() took (ms) " + (startupEnd - startupStart));

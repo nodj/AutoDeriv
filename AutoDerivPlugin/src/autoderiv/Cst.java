@@ -27,6 +27,9 @@ public class Cst {
 	public static boolean		ENABLE_INFO						= false;
 	public static boolean		ENABLE_DBG						= false;
 
+	public static String		OPTION_STARTUP_CHECK_STR 		= "/options/startupcheck/enable";
+	public static boolean		OPTION_STARTUP_CHECK	 		= true;
+
 	public static boolean		DECORATION_SUFFIX_ENABLED		= true;
 	public static String		DECORATION_SUFFIX_STR			= "/decoration/suffix";
 	public static String		DECORATION_SUFFIX				= " <deriv>";
@@ -126,6 +129,8 @@ public class Cst {
 			else if(key.equals(PLUGIN_ID+TRACE_WARN_STR))
 				Cst.ENABLE_WARN = "true".equals(valt);
 
+			else if(key.equals(PLUGIN_ID+OPTION_STARTUP_CHECK_STR))
+				Cst.OPTION_STARTUP_CHECK = "true".equals(valt);
 
 			else if(key.equals(PLUGIN_ID+DECORATION_SUFFIX_STR)){
 				DECORATION_SUFFIX_ENABLED = true;
@@ -135,6 +140,7 @@ public class Cst {
 				DECORATION_PREFIX_ENABLED = true;
 				DECORATION_PREFIX = val;
 			}
+
 			else if(key.equals(PLUGIN_ID+DECORATION_FOREGROUND_R_STR))
 				DECORATION_FOREGROUND_R = Integer.parseInt(valt);
 			else if(key.equals(PLUGIN_ID+DECORATION_FOREGROUND_G_STR))
@@ -143,7 +149,6 @@ public class Cst {
 				DECORATION_FOREGROUND_B = Integer.parseInt(valt);
 
 			else if(key.equals(PLUGIN_ID+DECORATION_BACKGROUND_R_STR))
-
 				DECORATION_BACKGROUND_R = Integer.parseInt(valt);
 			else if(key.equals(PLUGIN_ID+DECORATION_BACKGROUND_G_STR))
 				DECORATION_BACKGROUND_G = Integer.parseInt(valt);
