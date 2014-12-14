@@ -5,6 +5,7 @@ issues:		noted (#n), see https://github.com/nodj/AutoDeriv/issues/n
 AutoDeriv TODO list 
 --------------------------------------------------------------------------------
 [x] add usage examples, explain the !/, the patterns...
+[ ] hash useful part of rule, compare this hash before reparsing
 [ ] make use of IProgress.isCanceled method ?
 [ ] handle conf files with zero rules - especially master
 [ ] command to force usage of regex even if path is OK. Eg. "^a$"
@@ -17,7 +18,24 @@ some command should be implemented as a menu button ?
 
 
 ================================================================================
-AutoDeriv v1.3.0: 2014-12-xx 
+AutoDeriv v1.3.1: 2014-12-?? [wait the git tag]
+--------------------------------------------------------------------------------
+- Better usage of IProgressMonitor, for better UX
+- lighter logging: less spam
+- Fixed handling of project deletion
+- Fixed handling of project status: closed vs open
+- Added basic plugin configuration. See "autoderiv.ini" part in the home site
+  - Customizable decoration prefix, suffix, background and foreground colors.
+- several internal modification without -in theory- visible effects:
+  - Fixed ConcurentModificationException: Prevent parallel execution of
+    changeEvent listener
+  - faster delta scan
+  - Prevent the spawn of WorkspacJob if there is nothing to do in it.
+  - Fixed some internal Exception
+  - Improved stability ?
+
+--------------------------------------------------------------------------------
+AutoDeriv v1.3.0: 2014-12-10
 --------------------------------------------------------------------------------
 - Added global .derived file, aka. Master Conf File (#3)
 - Added optional decoration on derived resources
@@ -31,10 +49,11 @@ AutoDeriv v1.2.0: 2014-12-03
 --------------------------------------------------------------------------------
 - Added CONTRIBUTORS
 - Added Changelog
-- better check of forbiden characters in windows path 
+- better check of forbiden characters in windows path
 - Fixed bug: bad attribute update if root rules is use.
 - log in [workspace]/.metadata/.log
-- Added Partern support : syntax at http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
+- Added Java Pattern support:
+  syntax: http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
 
 --------------------------------------------------------------------------------
 AutoDeriv v1.1.0: 2014-12-02 
@@ -44,7 +63,7 @@ AutoDeriv v1.1.0: 2014-12-02
 - Updated update site
 
 --------------------------------------------------------------------------------
-AutoDeriv v1.0.0: 2014-12-01 
+AutoDeriv v1.0.0: 2014-12-01
 --------------------------------------------------------------------------------
 - Fully functionnal basics
 - Added update site
