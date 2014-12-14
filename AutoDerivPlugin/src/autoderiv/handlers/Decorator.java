@@ -6,9 +6,14 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 import autoderiv.Cst;
 
 public class Decorator extends LabelProvider implements ILightweightLabelDecorator{
+
+	private Color	foregroundColor;
+	private Color	backgroundColor;
 
 	/**Called automagically by Eclipse.
 	 * I use this fct to filter the resources we decide to decorate or not.
@@ -50,7 +55,26 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 	 * @param decoration IDecoration to edit */
 	private void effectiveDecorate(IResource ir, IDecoration decoration) {
 //		decoration.setForegroundColor(new Color(Display.getDefault(), 80, 80, 80));
-		decoration.addSuffix(Cst.DECORATION_SUFFIX);
+		if(Cst.DECORATION_PREFIX_ENABLED)
+			decoration.addPrefix(Cst.DECORATION_PREFIX);
+		if(Cst.DECORATION_SUFFIX_ENABLED)
+			decoration.addSuffix(Cst.DECORATION_SUFFIX);
+		if(Cst.DECORATION_FOREGROUND_ENABLED){
+			if(foregroundColor==null)
+				foregroundColor = new Color(Display.getDefault(),
+						Cst.DECORATION_FOREGROUND_R,
+						Cst.DECORATION_FOREGROUND_G,
+						Cst.DECORATION_FOREGROUND_B);
+			decoration.setForegroundColor(foregroundColor);
+		}
+		if(Cst.DECORATION_BACKGROUND_ENABLED){
+			if(backgroundColor==null)
+				backgroundColor = new Color(Display.getDefault(),
+						Cst.DECORATION_BACKGROUND_R,
+						Cst.DECORATION_BACKGROUND_G,
+						Cst.DECORATION_BACKGROUND_B);
+			decoration.setBackgroundColor(backgroundColor);
+		}
 	}
 
 }

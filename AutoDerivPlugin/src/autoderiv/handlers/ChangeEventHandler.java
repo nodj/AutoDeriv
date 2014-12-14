@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
-import autoderiv.Activator;
 import autoderiv.Cst;
 import autoderiv.Debug;
 import autoderiv.Filter;
@@ -94,7 +93,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		}
 
 		// create the asynchronous working task.
-		WorkspaceJob wj = new WorkspaceJob(Activator.PLUGIN_ID + " - On Change Event Update Job") {
+		WorkspaceJob wj = new WorkspaceJob(Cst.PLUGIN_NAME + " - On Change Event Update Job") {
 
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor progress) throws CoreException {
@@ -254,6 +253,12 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		boolean hasMasterConfFile = (masterConfFile!=null && masterConfFile.exists());
 		boolean hadMasterConfFile = Filter.hasMasterConf();
 
+		// also check the .metadata folder
+		if(!hasMasterConfFile){
+			masterConfFile = ResourcesPlugin.getWorkspace().getRoot().getLocation().append(".metadata").append(Cst.CONF_FILE_NAME).toFile();
+			hasMasterConfFile = (masterConfFile!=null && masterConfFile.exists());
+		}
+
 		if(hasMasterConfFile){
 			long masterConfLastModified = masterConfFile.lastModified();
 			Filter.setMasterConfFile(masterConfFile);
@@ -285,7 +290,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 	/**@brief manage the initial state. But don't waste time here. */
 	public void startup() {
 		Debug.info("=====  ChangeEventHandler.startup()  =====");
-		WorkspaceJob wj = new WorkspaceJob(Activator.PLUGIN_ID + " - Startup Update Job") {
+		WorkspaceJob wj = new WorkspaceJob(Cst.PLUGIN_NAME + " - Startup Update Job") {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor progress) throws CoreException {
 				progress.beginTask("startup", 100);

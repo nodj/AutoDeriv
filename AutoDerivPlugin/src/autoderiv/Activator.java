@@ -14,16 +14,16 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-
+		Debug.log = getLog();
 		info("AutoDeriv plugin starts");
+
+		// it about the plugin configuration itself
+		Tools.readConf();
+
+		// launch the listener, + ini
 		listener = new ChangeEventHandler();
 		listener.startup();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
-
-		Debug.log = getLog();
-
-		Debug.printLog = true;
-		Debug.printDbg = true;
 	}
 
 	@Override
@@ -32,4 +32,5 @@ public class Activator extends AbstractUIPlugin {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 		super.stop(context);
 	}
+
 }
