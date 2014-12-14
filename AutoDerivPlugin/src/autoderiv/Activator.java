@@ -18,7 +18,7 @@ public class Activator extends AbstractUIPlugin {
 		info("AutoDeriv plugin starts");
 
 		// it about the plugin configuration itself
-		Tools.readConf();
+		Cst.readConf();
 
 		// launch the listener, + ini
 		listener = new ChangeEventHandler();

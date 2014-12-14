@@ -8,7 +8,7 @@ AutoDeriv TODO list
 [ ] hash useful part of rule, compare this hash before reparsing
 [ ] make use of IProgress.isCanceled method ?
 [ ] handle conf files with zero rules - especially master
-[ ] command to force usage of regex even if path is OK. Eg. "^a$"
+[ ] command to force usage of regex even if path is legal. Eg. "^a$"
 [ ] command 'post' & 'pre' for the global .derived file
 [ ] command to disable [Pattern -> fnmatch] regex syntax conversion
 [ ] add info, warn, err for .derived files
