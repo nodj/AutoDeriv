@@ -15,3 +15,7 @@ It should:
 * auto-detect which project of the workspace uses this functionality or not
 * perform update as fast as possible without slowing down the IDE or reducing UX
 * not require additional, in-IDE configuration (except plug-in installation of course)
+
+For more information, examples of use, see the [home page](http://nodj.github.io/AutoDeriv)
+If something is wrong, or if you have an idea, a proposition, you should open an [issue](https://github.com/nodj/AutoDeriv/issues)
+If this plugin helped you, support it back with a [donation!](https://pledgie.com/campaigns/27750)
