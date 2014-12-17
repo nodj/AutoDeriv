@@ -1,8 +1,13 @@
-package autoderiv.handlers;
+package net.nodj.autoderivplugin.handlers;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import net.nodj.autoderivplugin.Conf;
+import net.nodj.autoderivplugin.Cst;
+import net.nodj.autoderivplugin.Debug;
+import net.nodj.autoderivplugin.Filter;
+import net.nodj.autoderivplugin.Tools;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -13,13 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IDecoratorManager;
-import org.eclipse.ui.PlatformUI;
-import autoderiv.Cst;
-import autoderiv.Debug;
-import autoderiv.Filter;
-import autoderiv.Tools;
 
 
 /**@brief This class is the main IResourceChangeListener of the plug-in and must
@@ -218,16 +216,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 				}
 				progress.worked(10);
 
-				// handle decoration
-				// Decorate using current UI thread
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						IDecoratorManager idm = PlatformUI.getWorkbench().getDecoratorManager();
-						idm.update("autoderiv.handlers.Decorator");
-					}
-				});
-
-				progress.worked(10);
+				Decorator.updateUI();
 
 				return new Status(Status.OK, "AutoDeriv", "IResourceChangeEvent managed");
 			}
@@ -340,7 +329,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		}
 
 
-		if(Cst.OPTION_STARTUP_CHECK)
+		if(Conf.STARTUP_CHECK)
 			FilterManager.filterWorkspace(progress);
 
 		double startupEnd = Tools.getmsd();

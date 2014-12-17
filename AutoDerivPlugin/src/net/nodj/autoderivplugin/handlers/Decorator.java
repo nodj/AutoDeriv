@@ -1,19 +1,30 @@
-package autoderiv.handlers;
+package net.nodj.autoderivplugin.handlers;
 
-import static autoderiv.Debug.*;
+import static net.nodj.autoderivplugin.Debug.*;
+import net.nodj.autoderivplugin.Conf;
+import net.nodj.autoderivplugin.Cst;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
-import autoderiv.Cst;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class Decorator extends LabelProvider implements ILightweightLabelDecorator{
+	private static ImageDescriptor derivedIcon;
 
-	private Color	foregroundColor;
-	private Color	backgroundColor;
+	static{
+		loadIcon("gray");
+	}
+
+	private static Color	foregroundColor;
+	private static Color	backgroundColor;
+	private static Font		font;
 
 	/**Called automagically by Eclipse.
 	 * I use this fct to filter the resources we decide to decorate or not.
@@ -50,31 +61,63 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 		}
 	}
 
+
+	public static void loadIcon(String variation) {
+		ImageDescriptor newDerivedIcon = AbstractUIPlugin.imageDescriptorFromPlugin(Cst.PLUGIN_ID, "icons/d8/"+variation+".png");
+		if(newDerivedIcon!=null)
+			derivedIcon = newDerivedIcon;
+	}
+
+
 	/** Will decorate specified resource.
 	 * @param ir IResource to decorate
 	 * @param decoration IDecoration to edit */
 	private void effectiveDecorate(IResource ir, IDecoration decoration) {
-//		decoration.setForegroundColor(new Color(Display.getDefault(), 80, 80, 80));
-		if(Cst.DECORATION_PREFIX_ENABLED)
-			decoration.addPrefix(Cst.DECORATION_PREFIX);
-		if(Cst.DECORATION_SUFFIX_ENABLED)
-			decoration.addSuffix(Cst.DECORATION_SUFFIX);
-		if(Cst.DECORATION_FOREGROUND_ENABLED){
+		if(Conf.DECO_LABEL_TEXT){
+			if(Conf.DECO_PREFIX!=null)
+				decoration.addPrefix(Conf.DECO_PREFIX);
+			if(Conf.DECO_SUFFIX!=null)
+				decoration.addSuffix(Conf.DECO_SUFFIX);
+		}
+
+		if(Conf.DECO_LABEL_FCOLOR){
 			if(foregroundColor==null)
-				foregroundColor = new Color(Display.getDefault(),
-						Cst.DECORATION_FOREGROUND_R,
-						Cst.DECORATION_FOREGROUND_G,
-						Cst.DECORATION_FOREGROUND_B);
+				foregroundColor = new Color(Display.getDefault(), Conf.DECO_FOREGROUND);
 			decoration.setForegroundColor(foregroundColor);
 		}
-		if(Cst.DECORATION_BACKGROUND_ENABLED){
+
+		if(Conf.DECO_LABEL_BCOLOR){
 			if(backgroundColor==null)
-				backgroundColor = new Color(Display.getDefault(),
-						Cst.DECORATION_BACKGROUND_R,
-						Cst.DECORATION_BACKGROUND_G,
-						Cst.DECORATION_BACKGROUND_B);
+				backgroundColor = new Color(Display.getDefault(), Conf.DECO_BACKGROUND);
 			decoration.setBackgroundColor(backgroundColor);
 		}
+
+		if(Conf.DECO_FONT_ENABLED){
+			if(font==null)
+				font = new Font(Display.getDefault(), Conf.DECO_FONT_DATA);
+			decoration.setFont(font);
+		}
+
+		if(Conf.DECO_ICON_ENABLED)
+			decoration.addOverlay(derivedIcon, Conf.DECO_ICON_LOC);
+	}
+
+
+	/** handle re-decoration of the whole workspace */
+	public static void updateUI() {
+		// Decorate using current UI thread
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				PlatformUI.getWorkbench().getDecoratorManager().update("net.nodj.autoderivplugin.handlers.Decorator");
+			}
+		});
+	}
+
+
+	public static void discardCacheUI() {
+		foregroundColor = null;
+		backgroundColor = null;
+		font = null;
 	}
 
 }

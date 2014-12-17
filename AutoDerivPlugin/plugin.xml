@@ -3,27 +3,54 @@
 <plugin>
 
 	<extension
-		point="org.eclipse.ui.startup"
-		id="autoderiv.handlers.StartupHandler"
-		name="startup handler">
+		  point="org.eclipse.ui.startup"
+		  id="net.nodj.autoderivplugin.handlers.StartupHandler"
+		  name="startup handler">
 		<startup
-			class="autoderiv.handlers.StartupHandler">
+			class="net.nodj.autoderivplugin.handlers.StartupHandler">
 		</startup>
 	</extension>
 
 	<extension
-		point="org.eclipse.ui.decorators">
+		  point="org.eclipse.ui.decorators">
 		<decorator
-			id="autoderiv.handlers.Decorator"
-			label="AutoDeriv: decorate derived resources"
-			state="true"
-			class= "autoderiv.handlers.Decorator"
-			adaptable="true"
-			lightweight="true">
+		  adaptable="false"
+		  class="net.nodj.autoderivplugin.handlers.Decorator"
+		  id="net.nodj.autoderivplugin.handlers.Decorator"
+		  label="AutoDeriv: decorate derived resources"
+		  lightweight="true"
+		  state="true">
 			<description>
 				This decorate resources with their "derived" attribute set.
 			</description>
 		</decorator>
+	</extension>
+	
+	<extension
+		  point="org.eclipse.ui.preferencePages">
+		<page
+			  class="net.nodj.autoderivplugin.preferences.SamplePreferencePage"
+			  id="net.nodj.autoderivplugin.preferences.SamplePreferencePage"
+			  name="AutoDeriv">
+			<keywordReference
+				id="AutoDeriv.keyword1">
+			</keywordReference>
+		</page>
+	</extension>
+
+	<extension
+		  point="org.eclipse.core.runtime.preferences">
+		<initializer
+			class="net.nodj.autoderivplugin.preferences.PreferenceInitializer">
+		</initializer>
+	</extension>
+	
+	<extension
+		  point="org.eclipse.ui.keywords">
+		<keyword
+		  id="AutoDeriv.keyword1"
+		  label="autoderiv derived decorations">
+		</keyword>
 	</extension>
 
 </plugin>

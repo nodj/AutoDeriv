@@ -1,6 +1,6 @@
-package autoderiv;
+package net.nodj.autoderivplugin;
 
-import static autoderiv.Debug.*;
+import static net.nodj.autoderivplugin.Debug.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,14 +11,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import net.nodj.autoderivplugin.rules.PatternRule;
+import net.nodj.autoderivplugin.rules.TreeRule;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import autoderiv.rules.PatternRule;
-import autoderiv.rules.TreeRule;
 
 
 public class Filter {
@@ -54,16 +54,10 @@ public class Filter {
 		dbg("Filter.parseRule() rule " + lineNumber + " ["+line+"]");
 //		if(filters.isEmpty()) return; // commented out cause the check is already done in the only call site
 
-		// filter out comments (after #char)
-		int commentLocation = line.indexOf('#');
-		if(commentLocation != -1)
-			line = line.substring(0, commentLocation);
+		// filter out comments (after '#' char) and remove whitespaces
+		line = Tools.trimAfter(line, '#').trim();
 
-		// remove leading / trailing whitespace
-		line = line.trim();
-		if(line.length() == 0) return;
-
-		dbg("usefull part line is : ["+line+"]");
+		if(line.isEmpty()) return;
 
 		// line is a special line
 		if(line.startsWith(">")){

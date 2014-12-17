@@ -11,12 +11,21 @@ AutoDeriv TODO list
 [ ] command 'post' & 'pre' for the global .derived file
 [ ] command to disable [Pattern -> fnmatch] regex syntax conversion
 [ ] add info, warn, err for .derived files
+[ ] add markers, annotations
 some command should be implemented as a menu button ?
 ================================================================================
 
 
 ================================================================================
-AutoDeriv v1.3.1: 2014-12-?? [wait the git tag]
+AutoDeriv next version
+--------------------------------------------------------------------------------
+- added icon decorator
+- added preference page
+minor
+- package restructuration
+
+--------------------------------------------------------------------------------
+AutoDeriv v1.3.1: 2014-12-15
 --------------------------------------------------------------------------------
 - Better usage of IProgressMonitor, for better UX
 - lighter logging: less spam

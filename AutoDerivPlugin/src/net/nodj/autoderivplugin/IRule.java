@@ -1,4 +1,4 @@
-package autoderiv;
+package net.nodj.autoderivplugin;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;

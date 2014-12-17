@@ -1,12 +1,12 @@
-package autoderiv.handlers;
+package net.nodj.autoderivplugin.handlers;
 
-import static autoderiv.Debug.*;
+import static net.nodj.autoderivplugin.Debug.*;
 import java.util.Collection;
 import java.util.HashMap;
+import net.nodj.autoderivplugin.Filter;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
-import autoderiv.Filter;
 
 /**This class handles the active Filters of the plugin.
  * @author johan duparc (johan.duparc@gmail.com) */

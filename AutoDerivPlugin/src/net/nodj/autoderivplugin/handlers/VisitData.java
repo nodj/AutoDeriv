@@ -1,4 +1,4 @@
-package autoderiv.handlers;
+package net.nodj.autoderivplugin.handlers;
 
 import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;

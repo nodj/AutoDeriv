@@ -1,6 +1,8 @@
-package autoderiv.rules;
+package net.nodj.autoderivplugin.rules;
 
-import static autoderiv.Debug.*;
+import static net.nodj.autoderivplugin.Debug.*;
+import net.nodj.autoderivplugin.IRule;
+import net.nodj.autoderivplugin.Tools;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -8,8 +10,6 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import autoderiv.IRule;
-import autoderiv.Tools;
 
 /**@brief this IRule is used when the conf file specify a folder which is
  * recursively derived.

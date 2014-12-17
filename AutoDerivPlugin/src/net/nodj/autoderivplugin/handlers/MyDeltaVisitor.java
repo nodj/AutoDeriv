@@ -1,12 +1,12 @@
-package autoderiv.handlers;
+package net.nodj.autoderivplugin.handlers;
 
-import static autoderiv.Debug.*;
+import static net.nodj.autoderivplugin.Debug.*;
+import net.nodj.autoderivplugin.Cst;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
-import autoderiv.Cst;
 
 /**This class 'reads' the change event deltas, and fills structure (VisitData)
  * with much simpler information.
@@ -97,7 +97,6 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 					return false;
 				}
 			}
-
 
 			return true; // as we may encounter some addition later
 

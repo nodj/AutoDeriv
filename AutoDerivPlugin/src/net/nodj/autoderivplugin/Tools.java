@@ -1,4 +1,4 @@
-package autoderiv;
+package net.nodj.autoderivplugin;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -33,6 +33,15 @@ public class Tools {
 				res.setDerived(derived, progress);
 			} catch (CoreException e) { e.printStackTrace(); }
 		}
+	}
+
+
+	/** remove the part of the line which is after the character */
+	public static String trimAfter(String line, char c) {
+		int commentLocation = line.indexOf('#');
+		if(commentLocation != -1)
+			line = line.substring(0, commentLocation);
+		return line;
 	}
 
 }

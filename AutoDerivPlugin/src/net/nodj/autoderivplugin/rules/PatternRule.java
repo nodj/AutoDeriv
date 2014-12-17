@@ -1,15 +1,15 @@
-package autoderiv.rules;
+package net.nodj.autoderivplugin.rules;
 
-import static autoderiv.Debug.*;
+import static net.nodj.autoderivplugin.Debug.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.nodj.autoderivplugin.IRule;
+import net.nodj.autoderivplugin.Tools;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import autoderiv.IRule;
-import autoderiv.Tools;
 
 /** This is the regex like rule.
  * When user inputs things like '*.txt', the rule is handled by this class. */
