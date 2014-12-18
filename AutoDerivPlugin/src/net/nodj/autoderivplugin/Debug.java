@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.Status;
 /** Prints, log... Nothing fancy here */
 public class Debug {
 
+	private static int msgCount=0;
 	public static ILog log;
 	private static final String PREINFO = "i.";
 	private static final String PREWARN = "!.";
@@ -31,7 +32,8 @@ public class Debug {
 
 	private static void common(String str, PrintStream flux, int status_level) {
 		StackTraceElement s = Thread.currentThread().getStackTrace()[3];
-		String msg = String.format("%s:\t%s @ %s.%s(%s:%s)%n",Tools.getms(), str, s.getClassName(), s.getMethodName(), s.getFileName(), s.getLineNumber());
+		String msg = String.format("[msg %s] %s:\t%s @ %s.%s(%s:%s)%n",msgCount,Tools.getms(), str, s.getClassName(), s.getMethodName(), s.getFileName(), s.getLineNumber());
+		msgCount++;
 		if(Conf.OUTPUT_STD) flux.print(msg);
 		if(Conf.OUTPUT_LOG && log!=null) log.log(new Status(status_level, Cst.PLUGIN_NAME, msg));
 	}
