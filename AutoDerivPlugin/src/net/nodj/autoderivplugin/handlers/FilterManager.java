@@ -3,8 +3,10 @@ package net.nodj.autoderivplugin.handlers;
 import static net.nodj.autoderivplugin.Debug.*;
 import java.util.Collection;
 import java.util.HashMap;
+import net.nodj.autoderivplugin.Cst;
 import net.nodj.autoderivplugin.Filter;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -59,6 +61,16 @@ public class FilterManager {
 
 	public static boolean isEmpty() { return projectsFilter.isEmpty(); }
 
+	public static boolean isActiveConfFile(IResource r) {
+		if(!r.getName().equals(Cst.CONF_FILE_NAME))
+			return false;
+
+		Filter f = getByProj(r.getProject());
+		if(f == null)
+			return false;
+
+		return r.equals(f.getLocalConf());
+	}
 
 
 }

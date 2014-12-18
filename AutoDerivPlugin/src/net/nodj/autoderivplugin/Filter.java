@@ -277,4 +277,9 @@ public class Filter {
 	public static boolean hasMasterConf()
 	{ return masterConfFile != null; }
 
+
+	public IResource getLocalConf() {
+		return localConfFile;
+	}
+
 }

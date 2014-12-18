@@ -6,7 +6,9 @@ import net.nodj.autoderivplugin.Cst;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DecorationContext;
 import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
@@ -17,9 +19,16 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class Decorator extends LabelProvider implements ILightweightLabelDecorator{
 	private static ImageDescriptor derivedIcon;
+	private static ImageDescriptor confFileIcon;
+	private static IDecorationContext defaultContext;
 
 	static{
-		loadIcon("gray");
+		derivedIcon = loadIcon("icons/derived.png");
+		confFileIcon = loadIcon("icons/conffile.png");
+
+		defaultContext = DecorationContext.DEFAULT_CONTEXT;
+
+		allowReplace(defaultContext);
 	}
 
 	private static Color	foregroundColor;
@@ -46,7 +55,7 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 			try {
 				IResource ir = (IResource) ((PlatformObject) element).getAdapter(IResource.class);
 				if (ir != null && ir.isDerived())
-					effectiveDecorate(ir, decoration);
+				effectiveDecorateDerived(ir, decoration);
 			} catch (Exception e) {
 				info("element " + element.toString() + " not usable. "
 						+ "Type is " + element.getClass().getCanonicalName());
@@ -56,23 +65,37 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 
 		// easy case. Item is an IResource child.
 		IResource objectResource = (IResource) element;
-		if(objectResource.isDerived()){
-			effectiveDecorate(objectResource, decoration);
-		}
+
+		if(FilterManager.isActiveConfFile(objectResource))
+			effectiveDecorateConfFile(objectResource, decoration);
+
+		if(objectResource.isDerived())
+			effectiveDecorateDerived(objectResource, decoration);
 	}
 
 
-	public static void loadIcon(String variation) {
-		ImageDescriptor newDerivedIcon = AbstractUIPlugin.imageDescriptorFromPlugin(Cst.PLUGIN_ID, "icons/d8/"+variation+".png");
-		if(newDerivedIcon!=null)
-			derivedIcon = newDerivedIcon;
+	private static void allowReplace(IDecorationContext context) {
+		DecorationContext dcontext = (DecorationContext) context;
+		Object propertyValue = dcontext.getProperty(IDecoration.ENABLE_REPLACE);
+		boolean add = (propertyValue==null);
+		if(!add)
+			if(propertyValue instanceof Boolean)
+				add = (!(Boolean)propertyValue);
+		if(add)
+			dcontext.putProperty(IDecoration.ENABLE_REPLACE, Boolean.TRUE);
+	}
+
+
+	public static ImageDescriptor loadIcon(String filename) {
+		ImageDescriptor image = AbstractUIPlugin.imageDescriptorFromPlugin(Cst.PLUGIN_ID, filename);
+		return image;
 	}
 
 
 	/** Will decorate specified resource.
 	 * @param ir IResource to decorate
 	 * @param decoration IDecoration to edit */
-	private void effectiveDecorate(IResource ir, IDecoration decoration) {
+	private void effectiveDecorateDerived(IResource ir, IDecoration decoration) {
 		if(Conf.DECO_LABEL_TEXT){
 			if(Conf.DECO_PREFIX!=null)
 				decoration.addPrefix(Conf.DECO_PREFIX);
@@ -100,6 +123,19 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 
 		if(Conf.DECO_ICON_ENABLED)
 			decoration.addOverlay(derivedIcon, Conf.DECO_ICON_LOC);
+	}
+
+
+	private void effectiveDecorateConfFile(IResource objectResource, IDecoration decoration) {
+		if(!Conf.DECO_ICON_ENABLED)
+			return;
+
+		IDecorationContext context = decoration.getDecorationContext();
+		if(context != defaultContext)
+			allowReplace(context);
+
+		decoration.addOverlay(confFileIcon, IDecoration.REPLACE);
+//		decoration.addOverlay(confFileIcon, IDecoration.TOP_LEFT);
 	}
 
 
