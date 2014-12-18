@@ -22,10 +22,8 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 
 	/**Called when a local conf file is modified
 	 * @return true if we should visit the tree children */
-	public boolean confFileEventHandler(VisitData v, IResourceDelta delta){
-		switch (delta.getKind()) {
-		case IResourceDelta.NO_CHANGE:
-			return false;
+	public boolean confFileEventHandler(VisitData v, IResourceDelta delta, int kind, int flags){
+		switch (kind) {
 		case IResourceDelta.ADDED_PHANTOM:
 		case IResourceDelta.ADDED:
 			info("ChangeEventHandler.MyDeltaVisitor.visit() EXCELENT ! the project is now conf");
@@ -37,8 +35,8 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 			v.confDeleted = true;
 			break;
 		case IResourceDelta.CHANGED:
-			info("ChangeEventHandler.MyDeltaVisitor.confFileEventHandler() conf edited");
-			v.confUpdated = true;
+			info("ChangeEventHandler.MyDeltaVisitor.confFileEventHandler() conf edited:"+flags);
+			v.confUpdated = ((flags & IResourceDelta.CONTENT) != 0);
 			break;
 		default:
 			warn("ChangeEventHandler.MyDeltaVisitor.confFileEventHandler(): CASE NOT HANDLED");
@@ -49,24 +47,14 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 
 	/**Called far any non-conf file
 	 * @return true if we should visit tree children */
-	public boolean notConfFileEventHandler(VisitData v, IResourceDelta delta){
-		IResource res = delta.getResource();
-		IProject proj = res.getProject();
+	public boolean notConfFileEventHandler(VisitData v, IResourceDelta delta, boolean isFile, int kind, int flags, IProject proj, IResource res){
 		boolean isProject = (res==proj);
-		boolean isFile = (res.getType()==IResource.FILE);
-
-		int flags = delta.getFlags();
-//		boolean isWorkspace = (res.getType()==IResource.ROOT);
-
-
 		switch (delta.getKind()) {
-		case IResourceDelta.NO_CHANGE:
-			return false;
+		case IResourceDelta.ADDED_PHANTOM:
 		case IResourceDelta.ADDED:
 			if(isProject){
 				dbg("Project added: " + res.getName());
 				v.projAdded = true;
-
 				// we have to parse the whole project later, no need to pursue here
 				return false;
 			}
@@ -74,6 +62,7 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 			v.added.add(res);
 			return true;
 
+		case IResourceDelta.REMOVED_PHANTOM:
 		case IResourceDelta.REMOVED:
 			dbg("Resource " + res.getFullPath()+" was removed.");
 			v.projDeleted = isProject;
@@ -97,12 +86,7 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 					return false;
 				}
 			}
-
 			return true; // as we may encounter some addition later
-
-		case IResourceDelta.ADDED_PHANTOM:
-		case IResourceDelta.REMOVED_PHANTOM:
-			break;
 
 		default:
 			warn("ChangeEventHandler.MyDeltaVisitor.notConfFileEventHandler() case not implemented");
@@ -119,15 +103,26 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		IResource res = delta.getResource();
 		IProject proj = res.getProject();
-		// remove. DBG only
 		String name = res.getName();
+
+		//pre filter
+		int kind = delta.getKind();
+		if(kind== IResourceDelta.NO_CHANGE) return false;
+		int flags = delta.getFlags();
+		if(flags == IResourceDelta.MARKERS) return true;
+		if(flags == IResourceDelta.DERIVED_CHANGED) return true;
+
+		// if project is not Filtered, no lookup after the 1st level. Just check if conf file added.
+		// todo
+
+		dbg("real visit");
 
 		boolean isFile = (res.getType()==IResource.FILE);
 		boolean isconfile = isFile && name.equals(Cst.CONF_FILE_NAME) && (res.getParent() == proj);
 		// handle the resource
 		if(isconfile)
-			return confFileEventHandler(v, delta);
-		return notConfFileEventHandler(v, delta);
+			return confFileEventHandler(v, delta, kind, flags);
+		return notConfFileEventHandler(v, delta, isFile, kind, flags, proj, res);
 	}
 
 } // class MyDeltaVisitor
