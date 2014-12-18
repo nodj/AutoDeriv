@@ -17,28 +17,34 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+
+/**This class handles the resource decoration.
+ * Derived resources are decorated
+ * conf file (.derived file) are differently decorated too. */
 public class Decorator extends LabelProvider implements ILightweightLabelDecorator{
+	/** mini icon (8x8) located on one corner of a derived resource */
 	private static ImageDescriptor derivedIcon;
+
+	/** icon (16x16) which replaces the icon of an active .derived conf file */
 	private static ImageDescriptor confFileIcon;
+
 	private static IDecorationContext defaultContext;
 
 	static{
-		derivedIcon = loadIcon("icons/derived.png");
-		confFileIcon = loadIcon("icons/conffile.png");
-
+		derivedIcon = loadIcon("derived.png");
+		confFileIcon = loadIcon("conffile.png");
 		defaultContext = DecorationContext.DEFAULT_CONTEXT;
-
 		allowReplace(defaultContext);
 	}
 
+	// label decoration attributes
 	private static Color	foregroundColor;
 	private static Color	backgroundColor;
 	private static Font		font;
 
 	/**Called automagically by Eclipse.
 	 * I use this fct to filter the resources we decide to decorate or not.
-	 * see effectiveDecorate method, which effectively affect the IDecoration
-	 */
+	 * see effectiveDecorate method, which effectively affect the IDecoration */
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		/* we only decorate IResources (IFile / IFolder mainly) but some awkward
@@ -74,6 +80,7 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 	}
 
 
+	/** Try to force a DecorationContext to accept the REPLACE decoration method */
 	private static void allowReplace(IDecorationContext context) {
 		DecorationContext dcontext = (DecorationContext) context;
 		Object propertyValue = dcontext.getProperty(IDecoration.ENABLE_REPLACE);
@@ -86,9 +93,9 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 	}
 
 
+	/** load an icon from the icons folder */
 	public static ImageDescriptor loadIcon(String filename) {
-		ImageDescriptor image = AbstractUIPlugin.imageDescriptorFromPlugin(Cst.PLUGIN_ID, filename);
-		return image;
+		return AbstractUIPlugin.imageDescriptorFromPlugin(Cst.PLUGIN_ID, "icons/" + filename);
 	}
 
 
@@ -126,6 +133,7 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 	}
 
 
+	/** decorates conf files */
 	private void effectiveDecorateConfFile(IResource objectResource, IDecoration decoration) {
 		if(!Conf.DECO_ICON_ENABLED)
 			return;
@@ -135,7 +143,6 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 			allowReplace(context);
 
 		decoration.addOverlay(confFileIcon, IDecoration.REPLACE);
-//		decoration.addOverlay(confFileIcon, IDecoration.TOP_LEFT);
 	}
 
 
@@ -149,7 +156,8 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 		});
 	}
 
-
+	/** Called when some parameters are modified by the user in order to make
+	 * changes active asap */
 	public static void discardCacheUI() {
 		foregroundColor = null;
 		backgroundColor = null;

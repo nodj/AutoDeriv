@@ -261,12 +261,19 @@ public class Filter {
 	}
 
 
+	/**Remove all the markers added by AutoDeriv to the local conf file */
 	private void clearMarkers(){
 		for(IMarker m : markers)
 			try { m.delete(); } catch (CoreException e) { }
 		markers.clear();
 	}
 
+
+	/** Generic marker creation method.
+	 * Add a marker in local conf file, at specified line, with specified
+	 * severity and message.
+	 * @param txt information for user
+	 * @param severity one of IMarker.SEVERITY_* */
 	private void addRuleMarker(int lineNb, String txt, int severity){
 		try {
 			IMarker marker = localConfFile.createMarker(IMarker.PROBLEM);
@@ -279,12 +286,15 @@ public class Filter {
 		} catch (CoreException e) {}
 	}
 
+
+	/** add a warning marker for a ill-formed rule */
 	private void addBadRuleMarker(int lineNb, String info)
 	{addRuleMarker(lineNb, "Bad rule: "+info, IMarker.SEVERITY_WARNING);}
 
+
+	/** add a marker confirmation for a well-formed rule */
 	private void addInfoRuleMarker(int lineNb, String info)
 	{addRuleMarker(lineNb, "Added rule: "+info, IMarker.SEVERITY_INFO);}
-
 
 
 	/**Update the master conf file. Used to set, but also to remove the master
@@ -308,17 +318,14 @@ public class Filter {
 	/**Checks that it has a local conf file associated. This makes sense cause
 	 * the Filter may exists only because of the master conf file.
 	 * @return true if the Filter has a local conf file associated. */
-	public boolean hasLocalConf()
-	{ return localConfFile != null; }
+	public boolean hasLocalConf() { return localConfFile != null; }
 
 
 	/**Check if the master conf file is set (non-null) */
-	public static boolean hasMasterConf()
-	{ return masterConfFile != null; }
+	public static boolean hasMasterConf() { return masterConfFile != null; }
 
 
-	public IResource getLocalConf() {
-		return localConfFile;
-	}
-
+	/** localConfFile getter.
+	 * Returns null if Filter has master rules only. */
+	public IResource getLocalConf() { return localConfFile; }
 }

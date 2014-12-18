@@ -14,14 +14,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author johan duparc (johan.duparc@gmail.com) */
 public class FilterManager {
 
-	/// ALL THE FILTERS |o/
+	/** ALL THE FILTERS |o/ */
 	private static final HashMap<IProject, Filter> projectsFilter = new HashMap<IProject, Filter>();
 
+
+	/** returns all the filters */
 	public static Collection<Filter> getFilters()
 	{ return projectsFilter.values(); }
 
+
+	/** returns the Filter associated with specified project if any. Returns null in other cases. */
 	public static Filter getByProj(IProject proj)
 	{ return projectsFilter.get(proj); }
+
 
 	/** Create a Filter for every project. Used when a wild master conf file appears */
 	public static void filterForAll() {
@@ -31,6 +36,7 @@ public class FilterManager {
 			else
 				getOrCreateFilter(proj);
 	}
+
 
 	/**Return this project Filter. Creates it if necessary.
 	 * @param proj IProject related to the wanted Filter
@@ -53,14 +59,19 @@ public class FilterManager {
 	}
 
 
+	/** Apply all the Filters on their respective projects */
 	public static void filterWorkspace(IProgressMonitor progress) {
 		for(Filter f : projectsFilter.values()){
 			f.filterProject(progress);
 		}
 	}
 
+
+	/** check if the FilterManager has no Filter yet */
 	public static boolean isEmpty() { return projectsFilter.isEmpty(); }
 
+
+	/** Check if the given resource is a registered conf file */
 	public static boolean isActiveConfFile(IResource r) {
 		if(!r.getName().equals(Cst.CONF_FILE_NAME))
 			return false;
@@ -71,6 +82,5 @@ public class FilterManager {
 
 		return r.equals(f.getLocalConf());
 	}
-
 
 }
