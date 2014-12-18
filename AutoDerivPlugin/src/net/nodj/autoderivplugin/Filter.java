@@ -55,9 +55,8 @@ public class Filter {
 	 * @param lineNumber in-file line number (debug purpose) */
 	private static void parseRule(Collection<Filter> filters, boolean master, String line, int lineNumber){
 		dbg("Filter.parseRule() rule " + lineNumber + " ["+line+"]");
-//		if(filters.isEmpty()) return; // commented out cause the check is already done in the only call site
 
-		// filter out comments (after '#' char) and remove whitespaces
+		// filter out comments (after '#' char) and remove whitespace
 		line = Tools.trimAfter(line, '#').trim();
 
 		if(line.isEmpty()) return;
@@ -65,14 +64,9 @@ public class Filter {
 		// line is a special line
 		if(line.startsWith(">")){
 //			line = line.substring(1).trim();
-			// command line.
-//			if(line.startsWith("extension")){
-//
-//			}
-//			if(line.startsWith("global.before.local")){
-//			}
-//			if(line.startsWith("global.after.local")){
-//			}
+//			if(line.startsWith("extension")){}
+//			if(line.startsWith("global.before.local")){}
+//			if(line.startsWith("global.after.local")){}
 //			localRules.add(new XXXRule(project,...));
 			warn("commands not handled in this version");
 			return;

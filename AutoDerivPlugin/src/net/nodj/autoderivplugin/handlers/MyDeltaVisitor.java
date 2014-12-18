@@ -112,10 +112,7 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 		if(flags == IResourceDelta.MARKERS) return true;
 		if(flags == IResourceDelta.DERIVED_CHANGED) return true;
 
-		// if project is not Filtered, no lookup after the 1st level. Just check if conf file added.
-		// todo
-
-		dbg("real visit");
+		dbg("real visit for "+name+". flags = "+flags+", kind="+kind);
 
 		boolean isFile = (res.getType()==IResource.FILE);
 		boolean isconfile = isFile && name.equals(Cst.CONF_FILE_NAME) && (res.getParent() == proj);

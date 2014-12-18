@@ -19,7 +19,7 @@ some command should be implemented as a menu button ?
 ================================================================================
 AutoDeriv next version
 --------------------------------------------------------------------------------
-- added icon decorator
+- added icon decorator for derived resources and conf ".derived" file
 - added preference page
 minor
 - package restructuration
