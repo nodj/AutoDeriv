@@ -13,9 +13,11 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import net.nodj.autoderivplugin.rules.PatternRule;
 import net.nodj.autoderivplugin.rules.TreeRule;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -35,6 +37,7 @@ public class Filter {
 	private ArrayList<IRule> localRules = new ArrayList<IRule>();
 	private ArrayList<IRule> masterRules = new ArrayList<IRule>();
 
+	ArrayList<IMarker> markers = new ArrayList<IMarker>();
 
 	/**Create a Filter for this IProject
 	 * @param p IProject to follow */
@@ -88,6 +91,11 @@ public class Filter {
 				ArrayList<IRule> dest = master ? filter.masterRules : filter.localRules;
 				IPath p = new Path(path).makeRelativeTo(proj.getLocation());
 				dest.add(new TreeRule(proj, p, setAsDerived));
+				String info = "resource "+p.toString();
+				if(info.length()==0)
+					info = "whole project";
+				if(!master)
+					filter.addInfoRuleMarker(lineNumber, info + " marked as "+(setAsDerived?"":"NOT ")+"derived");
 			}
 			return;
 		}
@@ -103,13 +111,22 @@ public class Filter {
 			for(Filter filter : filters){
 				ArrayList<IRule> dest = (master ? filter.masterRules : filter.localRules);
 				dest.add(new PatternRule(filter.project, p, setAsDerived));
+				if(!master)
+					filter.addInfoRuleMarker(lineNumber, "resource matching pattern "+line+" marked as "+(setAsDerived?"":"NOT ")+"derived");
 			}
 			return;
 		}catch(PatternSyntaxException e){
 			warn("in rule " + lineNumber + ": bad regexp ("+ line +"): " + e.getMessage());
+			if(!master)
+				for(Filter filter : filters)
+					filter.addBadRuleMarker(lineNumber, " Bad regexp. "+e.getMessage());
 		}
 
 		warn("no use for line "+lineNumber+" ["+line+"]");
+
+		if(!master)
+			for(Filter filter : filters)
+				filter.addBadRuleMarker(lineNumber, "Can't find suitable rule type.");
 	}
 
 	/**This method transforms fnmatch-like regex to java Pattern regex.
@@ -236,6 +253,8 @@ public class Filter {
 		dbg("Filter.reparseLocalConf() Parsing localRules");
 		localRules.clear();
 
+		clearMarkers();
+
 		// find the conf file, return if not found
 		localConfFile = project.findMember(Cst.CONF_FILE_NAME);
 		if(!hasLocalConf()) return;
@@ -246,6 +265,40 @@ public class Filter {
 		filters.add(this);
 		parseRules(localConfFile.getLocation().toFile(), filters, false);
 	}
+
+
+	private void clearMarkers(){
+		for(IMarker m : markers)
+			try { m.delete(); } catch (CoreException e) { }
+		markers.clear();
+	}
+
+	private void addBadRuleMarker(int lineNb, String info){
+		try {
+			IMarker marker = localConfFile.createMarker(IMarker.PROBLEM);
+			if(!marker.exists()){ marker.delete(); return; } // security or paranoia ? I can't say.
+
+			marker.setAttribute(IMarker.LINE_NUMBER, lineNb);
+			marker.setAttribute(IMarker.MESSAGE, "Can't parse rule: "+info);
+			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+			marker.setAttribute(IMarker.TRANSIENT, true);
+			markers.add(marker);
+		} catch (CoreException e) {}
+	}
+
+	private void addInfoRuleMarker(int lineNb, String info){
+		try {
+			IMarker marker = localConfFile.createMarker(IMarker.PROBLEM);
+			if(!marker.exists()){ marker.delete(); return; } // security or paranoia ? I can't say.
+
+			marker.setAttribute(IMarker.LINE_NUMBER, lineNb);
+			marker.setAttribute(IMarker.MESSAGE, "Added rule: "+info);
+			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+			marker.setAttribute(IMarker.TRANSIENT, true);
+			markers.add(marker);
+		} catch (CoreException e) {}
+	}
+
 
 
 	/**Update the master conf file. Used to set, but also to remove the master
