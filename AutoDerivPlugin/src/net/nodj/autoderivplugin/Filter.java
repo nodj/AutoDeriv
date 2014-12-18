@@ -267,31 +267,23 @@ public class Filter {
 		markers.clear();
 	}
 
-	private void addBadRuleMarker(int lineNb, String info){
+	private void addRuleMarker(int lineNb, String txt, int severity){
 		try {
 			IMarker marker = localConfFile.createMarker(IMarker.PROBLEM);
 			if(!marker.exists()){ marker.delete(); return; } // security or paranoia ? I can't say.
-
 			marker.setAttribute(IMarker.LINE_NUMBER, lineNb);
-			marker.setAttribute(IMarker.MESSAGE, "Can't parse rule: "+info);
-			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+			marker.setAttribute(IMarker.MESSAGE, txt);
+			marker.setAttribute(IMarker.SEVERITY, severity);
 			marker.setAttribute(IMarker.TRANSIENT, true);
 			markers.add(marker);
 		} catch (CoreException e) {}
 	}
 
-	private void addInfoRuleMarker(int lineNb, String info){
-		try {
-			IMarker marker = localConfFile.createMarker(IMarker.PROBLEM);
-			if(!marker.exists()){ marker.delete(); return; } // security or paranoia ? I can't say.
+	private void addBadRuleMarker(int lineNb, String info)
+	{addRuleMarker(lineNb, "Bad rule: "+info, IMarker.SEVERITY_WARNING);}
 
-			marker.setAttribute(IMarker.LINE_NUMBER, lineNb);
-			marker.setAttribute(IMarker.MESSAGE, "Added rule: "+info);
-			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-			marker.setAttribute(IMarker.TRANSIENT, true);
-			markers.add(marker);
-		} catch (CoreException e) {}
-	}
+	private void addInfoRuleMarker(int lineNb, String info)
+	{addRuleMarker(lineNb, "Added rule: "+info, IMarker.SEVERITY_INFO);}
 
 
 
