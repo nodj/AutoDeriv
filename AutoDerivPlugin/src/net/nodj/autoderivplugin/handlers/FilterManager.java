@@ -40,7 +40,7 @@ public class FilterManager {
 		if(f == null){ // creation
 			f = new Filter(proj);
 			FilterManager.projectsFilter.put(proj, f);
-			warn("Project " + proj.getName() + " added to conf");
+			info("Project " + proj.getName() + " added to conf");
 		}
 		return f;
 	}
@@ -48,7 +48,7 @@ public class FilterManager {
 
 	/** remove this project from AutoDeriv conf */
 	public static void deleteFilter(IProject proj) {
-		warn("Project " + proj.getName() + " removed from conf");
+		info("Project " + proj.getName() + " removed from conf");
 		projectsFilter.remove(proj);
 	}
 
