@@ -10,8 +10,6 @@ AutoDeriv TODO list
 [ ] command to force usage of regex even if path is legal. Eg. "^a$"
 [ ] command 'post' & 'pre' for the global .derived file
 [ ] command to disable [Pattern -> fnmatch] regex syntax conversion
-[ ] add info, warn, err for .derived files
-[ ] add markers, annotations
 some command should be implemented as a menu button ?
 ================================================================================
 
