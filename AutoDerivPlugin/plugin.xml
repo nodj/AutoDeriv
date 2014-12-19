@@ -17,7 +17,7 @@
 		  adaptable="false"
 		  class="net.nodj.autoderivplugin.handlers.Decorator"
 		  id="net.nodj.autoderivplugin.handlers.Decorator"
-		  label="AutoDeriv: decorate derived resources"
+		  label="Derived resources (AutoDeriv plug-in)"
 		  lightweight="true"
 		  state="true">
 			<description>
