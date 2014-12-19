@@ -7,6 +7,8 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
+/**Here are stored the plugin settings.
+ * Most of these options are accessible through the plugin preference page. */
 public class Conf {
 
 	public static boolean	STARTUP_CHECK;

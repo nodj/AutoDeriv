@@ -112,7 +112,7 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 		if(flags == IResourceDelta.MARKERS) return true;
 		if(flags == IResourceDelta.DERIVED_CHANGED) return true;
 
-		dbg("real visit for "+name+". flags = "+flags+", kind="+kind);
+		dbg("real visit for '"+name+"'. flags="+flags+", kind="+kind);
 
 		boolean isFile = (res.getType()==IResource.FILE);
 		boolean isconfile = isFile && name.equals(Cst.CONF_FILE_NAME) && (res.getParent() == proj);
@@ -122,4 +122,4 @@ public class MyDeltaVisitor implements IResourceDeltaVisitor{
 		return notConfFileEventHandler(v, delta, isFile, kind, flags, proj, res);
 	}
 
-} // class MyDeltaVisitor
+}

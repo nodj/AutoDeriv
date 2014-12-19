@@ -61,7 +61,7 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 			try {
 				IResource ir = (IResource) ((PlatformObject) element).getAdapter(IResource.class);
 				if (ir != null && ir.isDerived())
-				effectiveDecorateDerived(ir, decoration);
+					effectiveDecorateDerived(ir, decoration);
 			} catch (Exception e) {
 				info("element " + element.toString() + " not usable. "
 						+ "Type is " + element.getClass().getCanonicalName());

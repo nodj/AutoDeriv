@@ -30,6 +30,7 @@ public class Activator extends AbstractUIPlugin implements IPropertyChangeListen
 		listener.startup();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
 
+		// Preference edition reaction
 		getPreferenceStore().addPropertyChangeListener(this);
 	}
 
@@ -40,11 +41,12 @@ public class Activator extends AbstractUIPlugin implements IPropertyChangeListen
 		super.stop(context);
 	}
 
-	public static AbstractUIPlugin getDefault() {
-		return plugin;
-	}
+
+	/** easy access from everywhere */
+	public static AbstractUIPlugin getDefault() { return plugin; }
 
 
+	/**Called when User edit preferences. */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		// read all the parameters. Not optimal, but...

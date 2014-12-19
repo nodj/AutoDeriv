@@ -85,8 +85,8 @@ public class Filter {
 				ArrayList<IRule> dest = master ? filter.masterRules : filter.localRules;
 				IPath p = new Path(path).makeRelativeTo(proj.getLocation());
 				dest.add(new TreeRule(proj, p, setAsDerived));
-				String info = "resource "+p.toString();
-				if(info.length()==0)
+				String info = "resource '/"+p.toString()+"'";
+				if(p.toString().length()==0)
 					info = "whole project";
 				if(!master)
 					filter.addInfoRuleMarker(lineNumber, info + " marked as "+(setAsDerived?"":"NOT ")+"derived");
@@ -262,7 +262,7 @@ public class Filter {
 
 
 	/**Remove all the markers added by AutoDeriv to the local conf file */
-	private void clearMarkers(){
+	public void clearMarkers(){
 		for(IMarker m : markers)
 			try { m.delete(); } catch (CoreException e) { }
 		markers.clear();
@@ -275,6 +275,7 @@ public class Filter {
 	 * @param txt information for user
 	 * @param severity one of IMarker.SEVERITY_* */
 	private void addRuleMarker(int lineNb, String txt, int severity){
+		if(!Conf.MARKER_ENABLED) return;
 		try {
 			IMarker marker = localConfFile.createMarker(IMarker.PROBLEM);
 			if(!marker.exists()){ marker.delete(); return; } // security or paranoia ? I can't say.

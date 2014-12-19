@@ -23,9 +23,11 @@ public class VisitData{
 		return sb.toString();
 	}
 
+	/** check if this VisitData deserve attention */
 	public boolean somethingToDo() {
 		return (added.size()>0) || confUpdated || confAdded || confDeleted || projAdded || projDeleted ;
 	}
 
+	/** check if this VisitData deserve attention */
 	public boolean nothingToDo() { return !somethingToDo(); }
 }

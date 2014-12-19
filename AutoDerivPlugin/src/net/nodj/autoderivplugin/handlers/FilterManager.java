@@ -30,11 +30,10 @@ public class FilterManager {
 
 	/** Create a Filter for every project. Used when a wild master conf file appears */
 	public static void filterForAll() {
-		for (IProject proj : ResourcesPlugin.getWorkspace().getRoot().getProjects())
-			if (!proj.isOpen())
-				continue;
-			else
-				getOrCreateFilter(proj);
+		for (IProject proj : ResourcesPlugin.getWorkspace().getRoot().getProjects()){
+			if (!proj.isOpen()) continue;
+			getOrCreateFilter(proj);
+		}
 	}
 
 
@@ -61,9 +60,8 @@ public class FilterManager {
 
 	/** Apply all the Filters on their respective projects */
 	public static void filterWorkspace(IProgressMonitor progress) {
-		for(Filter f : projectsFilter.values()){
+		for(Filter f : projectsFilter.values())
 			f.filterProject(progress);
-		}
 	}
 
 

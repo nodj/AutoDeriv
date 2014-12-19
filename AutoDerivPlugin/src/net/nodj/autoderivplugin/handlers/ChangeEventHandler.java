@@ -52,7 +52,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		case IResourceChangeEvent.PRE_BUILD: Debug.dbg("PRE_BUILD"); break;
 		case IResourceChangeEvent.PRE_CLOSE: Debug.dbg("PRE_CLOSE"); break;
 		case IResourceChangeEvent.PRE_DELETE:
-			// when a project is delete
+			// Occurs when a project is delete
 			Debug.dbg("PRE_DELETE");
 			return;
 		case IResourceChangeEvent.PRE_REFRESH: Debug.dbg("PRE_REFRESH"); break;
@@ -83,11 +83,10 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		// check if we could avoid the workspace job
 		boolean nothingToDo = masterVisitData.nothingToDo() && perProjectVisitData.isEmpty();
 		if(nothingToDo){
-			Debug.dbg("Nothing to do for this change =)");
+			Debug.dbg("Nothing to do for this change.");
 			return;
-		}else{
-			Debug.dbg("Launch a new Workspace job for this change");
 		}
+		Debug.dbg("Launch a new Workspace job for this change");
 
 		// create the asynchronous working task.
 		WorkspaceJob wj = new WorkspaceJob(Cst.PLUGIN_NAME + " - On Change Event Update Job") {
