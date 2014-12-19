@@ -111,42 +111,25 @@ style="color: #666666;"># html files from /doc/are generated. Not all project ht
         <p>Since <code>v1.3.0</code>, the plugin uses the eclipse decoration system so that you can see instantly which resources are derived, which are not. This is very handy when you write <code>.derived</code> files as you can see the effects as soon as you save the modification.</p>
         <p>You may want to disable this in Eclipse preferences. Search for "decoration", or directly go to <code>Windows </code>&gt; <code>Preference </code>&gt; <code>General</code> &gt; <code>Appearance</code> &gt; <code><code>Label Decorations</code></code> From there, uncheck the <em>AutoDeriv: decorate derived resources</em>&nbsp; checkbox<em></em>. This should disable decoration instantly.</p>
         <h3>Plug-in configuration</h3>
-        <p>Since <code>v1.3.1</code>, a basic configuration is possible with an autoderiv.ini file placed in the workspace root folder, or in the .metadata folder. This file is used to edit some internal variable.</p>
-        <p>Here is the list of valid inputs for v1.3.1:</p>
-        <pre><code><span style="color: #666666;"># output logging on the eclipse .log file (.metadata folder)</span>
-net.nodj.AutoDerivPlugin/trace/logfile=true</code><br><code><code><span
-style="color: #666666;"># output logging on stdout (require that java.exe is used instead of javaw.exe)</span></code>
-net.nodj.AutoDerivPlugin/trace/stdout=true
-</code><code><code><span style="color: #666666;"># enable warn level logging</span></code>
-net.nodj.AutoDerivPlugin/trace/warn/enable=true
-</code><code><code><span style="color: #666666;"># enable info level logging</span></code>
-net.nodj.AutoDerivPlugin/trace/info/enable=true
-</code><code><code><span style="color: #666666;"># enable debug level logging (if you like spammed output ;))</span></code>
-net.nodj.AutoDerivPlugin/trace/debug/enable=true<br></code><br><code><code><code><span
-style="color: #666666;"># enable workspace startup check. This is not that expensive.</span></code></code>
-net.nodj.AutoDerivPlugin/options/startupcheck/enable=true<br><br></code><code><code><span
-style="color: #666666;"># custom decoration prefix/suffix</span></code>
-net.nodj.AutoDerivPlugin/decoration/prefix=(</code><code><code><span style="color: #666666;"></span></code>
-net.nodj.AutoDerivPlugin/decoration/suffix=)<br>
-</code><code><code><code><span style="color: #666666;"># override derived resource foreground color (value in the [0, 255] range)<span
-style="color: #efefef;"></span></span></code></code>
-net.nodj.AutoDerivPlugin/decoration/foreground/r=40
-net.nodj.AutoDerivPlugin/decoration/foreground/g=40
-net.nodj.AutoDerivPlugin/decoration/foreground/b=40
-
-</code><code><code><code><code><span style="color: #666666;"># override derived resource background color. Not prety</span></code></code></code>
-<span style="color: #666666;">#net.nodj.AutoDerivPlugin/decoration/background/r=200
-#net.nodj.AutoDerivPlugin/decoration/background/g=200
-#net.nodj.AutoDerivPlugin/decoration/background/b=200</span><br></code></pre>
-        <p>Yes, this is not the right place to do that. One of the task to do, is a proper GUI to handle these.</p>
-        <p><br>
-        </p>
+        <p>Since <code>v1.4.0</code>, AutoDeriv has its own Preference Page. Many aspects of the plugin are customizable so that you can choose the features you really want, with the design you like.</p>
+        <p>Here is the current page:</p>
+        <a target="_self" href="update/sitefiles/img/prefpage.png"><img
+            style="width: 336px; height: 473px;" title="Preference page"
+            alt="Preference page" src="update/sitefiles/img/prefpage.png"></a><br>
+        <br>
+        <br>
+        <br>
         <h2><a id="uninstall" class="anchor" href="#uninstall" aria-hidden="true"><span
               class="octicon octicon-link"></span></a>Uninstall</h2>
         <p>If this plugin doesn't help you, you can obviously uninstall it. Before that, you may want to clear all the attribute it has edited before. In order to do this easily, keep the <code>.derived</code> file, replace the whole content with one single line:</p>
         <pre><code>!/    <span style="color: #666666;"># clear the whole project tree (set root as not derived)</span></code></pre>
         <p>Save the file in order that the update occurs, the whole project should now be clean. You can now delete the <code>.derived</code> file, and uninstall the plugin.</p>
         <p> Please let me know if something is wrong, if I can improve the plugin, I'll try my best.</p>
+        <p><br>
+        </p>
+        <h2>Screenshot</h2>
+        <p><br>
+        </p>
         <p><br>
         </p>
         <h2>Contribute</h2>
