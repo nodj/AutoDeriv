@@ -29,7 +29,7 @@
 	<extension
 		  point="org.eclipse.ui.preferencePages">
 		<page
-			  class="net.nodj.autoderivplugin.preferences.SamplePreferencePage"
+			  class="net.nodj.autoderivplugin.preferences.MainPreferencePage"
 			  id="net.nodj.autoderivplugin.preferences.SamplePreferencePage"
 			  name="AutoDeriv">
 			<keywordReference

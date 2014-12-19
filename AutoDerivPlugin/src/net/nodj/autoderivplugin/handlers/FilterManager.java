@@ -81,4 +81,11 @@ public class FilterManager {
 		return r.equals(f.getLocalConf());
 	}
 
+
+	/** remove markers from all Filters */
+	public static void clearMarkers() {
+		for(Filter f : projectsFilter.values())
+			f.clearMarkers();
+	}
+
 }

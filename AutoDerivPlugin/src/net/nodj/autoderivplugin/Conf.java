@@ -12,6 +12,7 @@ import org.eclipse.swt.graphics.RGB;
 public class Conf {
 
 	public static boolean	STARTUP_CHECK;
+	public static boolean	MARKER_ENABLED;
 	public static boolean	OUTPUT_LOG;
 	public static boolean	OUTPUT_STD;
 	public static boolean	TRACE_WARN;
@@ -25,14 +26,19 @@ public class Conf {
 	public static boolean	DECO_FONT_ENABLED;
 	public static FontData	DECO_FONT_DATA;
 	public static boolean	DECO_ICON_ENABLED;
+	public static boolean	DECO_CONF_ENABLED;
 	public static int		DECO_ICON_LOC;
+	public static RGB		DECO_ICON_COLOR;
 	public static boolean	DECO_LABEL_BCOLOR;
 	public static boolean	DECO_LABEL_FCOLOR;
 
+
+	/** Update settings according to preferences */
 	public static void read() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
 		STARTUP_CHECK = store.getBoolean(PrefCst.P_STARTUP_CHECK);
+		MARKER_ENABLED = store.getBoolean(PrefCst.P_ENABLE_MARKER);
 
 		OUTPUT_LOG = store.getBoolean(PrefCst.P_OUTPUT_LOG);
 		OUTPUT_STD = store.getBoolean(PrefCst.P_OUTPUT_STD);
@@ -78,9 +84,8 @@ public class Conf {
 			if(loc_str.equals("BOTTOM_RIGHT"))
 				DECO_ICON_LOC = IDecoration.BOTTOM_RIGHT;
 		}
-
-
+		DECO_CONF_ENABLED = store.getBoolean(PrefCst.P_ENABLE_CONF_ICON);
+		DECO_ICON_COLOR = PreferenceConverter.getColor(store, PrefCst.P_ICON_COLOR);
 	}
-
 }
 

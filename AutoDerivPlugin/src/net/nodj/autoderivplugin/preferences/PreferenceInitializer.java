@@ -15,6 +15,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
 		store.setDefault(PrefCst.P_STARTUP_CHECK, true);
+		store.setDefault(PrefCst.P_ENABLE_MARKER, true);
 
 		store.setDefault(PrefCst.P_OUTPUT_LOG, true);
 		store.setDefault(PrefCst.P_OUTPUT_STD, false);
@@ -34,7 +35,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PrefCst.P_DECO_BACKGROUND, "255,255,255");
 
 		store.setDefault(PrefCst.P_ENABLE_DECO_ICON, true);
+		store.setDefault(PrefCst.P_ENABLE_CONF_ICON, true);
 		store.setDefault(PrefCst.P_DECO_ICON_LOC, "TOP_LEFT");
+		store.setDefault(PrefCst.P_ICON_COLOR, "200,255,0");
 	}
 
 }

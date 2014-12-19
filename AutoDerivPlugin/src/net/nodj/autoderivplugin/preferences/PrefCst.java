@@ -4,6 +4,7 @@ package net.nodj.autoderivplugin.preferences;
 public class PrefCst {
 	// global
 	public static final String	P_STARTUP_CHECK		= "startupCheck";
+	public static final String	P_ENABLE_MARKER		= "enabledMarker";
 
 	// tracing
 	public static final String	P_OUTPUT_LOG		= "outputToLogFile";
@@ -22,7 +23,9 @@ public class PrefCst {
 	public static final String	P_DECO_BACKGROUND	= "decoLabelBackgroundColor";
 	public static final String	P_DECO_LABEL_FONT	= "decoLabelFontEnable";
 	public static final String	P_ENABLE_DECO_FONT	= "decoLabelFont";
-	public static final String	P_ENABLE_DECO_ICON  = "decoIconEnabled";
+	public static final String	P_ENABLE_DECO_ICON	= "decoIconEnabled";
+	public static final String	P_ENABLE_CONF_ICON	= "decoConfIconEnabled";
 	public static final String	P_DECO_ICON_LOC		= "decoIconLocation";
+	public static final String	P_ICON_COLOR		= "iconColor";
 
 }

@@ -13,6 +13,9 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -31,8 +34,6 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 	private static IDecorationContext defaultContext;
 
 	static{
-		derivedIcon = loadIcon("derived.png");
-		confFileIcon = loadIcon("conffile.png");
 		defaultContext = DecorationContext.DEFAULT_CONTEXT;
 		allowReplace(defaultContext);
 	}
@@ -80,6 +81,14 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 	}
 
 
+	private static void loadIcons() {
+		int hueOffset = (int) (Conf.DECO_ICON_COLOR.getHSB()[0]+360-83);
+		hueOffset %= 360;
+		derivedIcon = loadIcon("derived.png", hueOffset);
+		confFileIcon = loadIcon("conffile.png", hueOffset);
+	}
+
+
 	/** Try to force a DecorationContext to accept the REPLACE decoration method */
 	private static void allowReplace(IDecorationContext context) {
 		DecorationContext dcontext = (DecorationContext) context;
@@ -96,6 +105,31 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 	/** load an icon from the icons folder */
 	public static ImageDescriptor loadIcon(String filename) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(Cst.PLUGIN_ID, "icons/" + filename);
+	}
+
+
+	/** change the icon hue */
+	public static ImageDescriptor loadIcon(String filename, int hueOffset) {
+		hueOffset = (int) ((Conf.DECO_ICON_COLOR.getHSB()[0]+360-83)%360);
+		ImageDescriptor normal = loadIcon(filename);
+		if(hueOffset==0) return normal;
+		ImageData data = normal.getImageData();
+		PaletteData pal = data.palette;
+		RGB rgb = new RGB(0,0,0);
+
+		for (int y = 0; y < data.height; y++) {
+			for (int x = 0; x < data.width; x++) {
+				int p = data.getPixel(x, y);
+				rgb.red = (p & pal.redMask) >> -pal.redShift;
+				rgb.green = (p & pal.greenMask) >> -pal.greenShift;
+				rgb.blue = (p & pal.blueMask) >> -pal.blueShift;
+				float[] hsb = rgb.getHSB();
+				rgb = new RGB((hsb[0] + hueOffset) % 360, hsb[1], hsb[2]);
+				p = (rgb.red << -pal.redShift) + (rgb.green << -pal.greenShift) + (rgb.blue << -pal.blueShift);
+				data.setPixel(x, y, p);
+			}
+		}
+		return ImageDescriptor.createFromImageData(data);
 	}
 
 
@@ -128,20 +162,25 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 			decoration.setFont(font);
 		}
 
-		if(Conf.DECO_ICON_ENABLED)
+		if(Conf.DECO_ICON_ENABLED){
+			if(derivedIcon==null)
+				loadIcons();
 			decoration.addOverlay(derivedIcon, Conf.DECO_ICON_LOC);
+		}
 	}
 
 
 	/** decorates conf files */
 	private void effectiveDecorateConfFile(IResource objectResource, IDecoration decoration) {
-		if(!Conf.DECO_ICON_ENABLED)
+		if(!Conf.DECO_CONF_ENABLED)
 			return;
 
 		IDecorationContext context = decoration.getDecorationContext();
 		if(context != defaultContext)
 			allowReplace(context);
 
+		if(confFileIcon==null)
+			loadIcons();
 		decoration.addOverlay(confFileIcon, IDecoration.REPLACE);
 	}
 
@@ -162,6 +201,8 @@ public class Decorator extends LabelProvider implements ILightweightLabelDecorat
 		foregroundColor = null;
 		backgroundColor = null;
 		font = null;
+		confFileIcon = null;
+		derivedIcon = null;
 	}
 
 }

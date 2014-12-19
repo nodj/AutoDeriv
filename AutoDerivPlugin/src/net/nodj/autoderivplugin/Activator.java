@@ -3,6 +3,7 @@ package net.nodj.autoderivplugin;
 import static net.nodj.autoderivplugin.Debug.*;
 import net.nodj.autoderivplugin.handlers.ChangeEventHandler;
 import net.nodj.autoderivplugin.handlers.Decorator;
+import net.nodj.autoderivplugin.handlers.FilterManager;
 import net.nodj.autoderivplugin.preferences.PrefCst;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -38,6 +39,7 @@ public class Activator extends AbstractUIPlugin implements IPropertyChangeListen
 	public void stop(BundleContext context) throws Exception {
 		info("AutoDeriv plugin stops");
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
+		getPreferenceStore().removePropertyChangeListener(this);
 		super.stop(context);
 	}
 
@@ -59,18 +61,22 @@ public class Activator extends AbstractUIPlugin implements IPropertyChangeListen
 		|| prop.equals(PrefCst.P_DECO_PREFIX)
 		|| prop.equals(PrefCst.P_DECO_SUFFIX)
 		|| prop.equals(PrefCst.P_DECO_ICON_LOC)
+		|| prop.equals(PrefCst.P_ICON_COLOR)
 		|| prop.equals(PrefCst.P_ENABLE_DECO_ICON)
+		|| prop.equals(PrefCst.P_ENABLE_CONF_ICON)
 		|| prop.equals(PrefCst.P_DECO_LABEL_BCOLOR)
 		|| prop.equals(PrefCst.P_DECO_LABEL_FCOLOR)
 		|| prop.equals(PrefCst.P_DECO_LABEL_FONT)
 		|| prop.equals(PrefCst.P_ENABLE_DECO_FONT)
 		|| prop.equals(PrefCst.P_DECO_LABEL_TEXT) ){
-			Decorator.updateUI();
 			Decorator.discardCacheUI();
+			Decorator.updateUI();
 		}
 
-		Debug.dbg("Property ["+ prop +"] change: "
-				+ event.getOldValue() + " -> " + event.getNewValue());
+		if(prop.equals(PrefCst.P_ENABLE_MARKER))
+			FilterManager.clearMarkers();
+
+		Debug.dbg("Property ["+ prop +"] change: " + event.getOldValue() + " -> " + event.getNewValue());
 	}
 }
 
