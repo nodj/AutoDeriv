@@ -17,12 +17,22 @@ some command should be implemented as a menu button ?
 
 
 ================================================================================
-AutoDeriv next version
+AutoDeriv v1.4.0: 2014-12-19
 --------------------------------------------------------------------------------
 - added icon decorator for derived resources and conf ".derived" file
-- added preference page
+- added parsing markers: info or warn
+- modifiable icon
+- added preference page. Parameters include:
+  - toggle startup check
+  - toggle parsing markers
+  - log/trace options
+  - derived resources: label prefix suffix, foreground/background color, font,
+    toggle icon, edit icon hue and corner location.
+  - toggle conf file decoration, edit icon hue
 minor
 - package restructuration
+- faster DeltaVisitor
+- better comments, refactors, tiny bugs...
 
 --------------------------------------------------------------------------------
 AutoDeriv v1.3.1: 2014-12-15
