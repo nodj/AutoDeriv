@@ -2,7 +2,7 @@
 <feature
       id="net.nodj.AutoDerivFeature"
       label="AutoDeriv"
-      version="1.4.0.qualifier"
+      version="1.4.1.qualifier"
       provider-name="nodj">
 
    <description url="http://nodj.github.io/AutoDeriv/">

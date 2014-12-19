@@ -3,12 +3,12 @@
    <description name="AutoDeriv-update@github" url="http://nodj.github.io/AutoDeriv/update">
       AutoDeriv update site on github
    </description>
-   <feature url="features/net.nodj.AutoDerivFeature_1.4.0.201412191051.jar" id="net.nodj.AutoDerivFeature" version="1.4.0.201412191051">
+   <feature url="features/net.nodj.AutoDerivFeature_1.4.1.201412191942.jar" id="net.nodj.AutoDerivFeature" version="1.4.1.201412191942">
       <category name="AutoDeriv"/>
    </feature>
    <category-def name="AutoDeriv" label="nodj&apos;s Eclipse plugins">
       <description>
-         Eclipse IDE dev
+         Eclipse IDE plugins
       </description>
    </category-def>
 </site>
