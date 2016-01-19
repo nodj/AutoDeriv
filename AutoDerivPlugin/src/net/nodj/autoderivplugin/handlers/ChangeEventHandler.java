@@ -89,7 +89,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 		Debug.dbg("Launch a new Workspace job for this change");
 
 		// create the asynchronous working task.
-		WorkspaceJob wj = new WorkspaceJob(Cst.PLUGIN_NAME + " - On Change Event Update Job") {
+		WorkspaceJob wj = new WorkspaceJob(Cst.PLUGIN_NAME + " - Refreshing status of modified elements...") {
 
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor progress) throws CoreException {
@@ -277,7 +277,7 @@ public class ChangeEventHandler implements IResourceChangeListener{
 	/**@brief manage the initial state. But don't waste time here. */
 	public void startup() {
 		Debug.info("=====  ChangeEventHandler.startup()  =====");
-		WorkspaceJob wj = new WorkspaceJob(Cst.PLUGIN_NAME + " - Startup Update Job") {
+		WorkspaceJob wj = new WorkspaceJob(Cst.PLUGIN_NAME + " - Refreshing workspace...") {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor progress) throws CoreException {
 				progress.beginTask("startup", 100);
