@@ -5,7 +5,7 @@ Bundle-SymbolicName: net.nodj.AutoDerivPlugin;singleton:=true
 Bundle-Version: 1.4.1.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.core.resources;bundle-version="3.9.1"
+ org.eclipse.core.resources;bundle-version="3.8.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: net.nodj.autoderivplugin,
