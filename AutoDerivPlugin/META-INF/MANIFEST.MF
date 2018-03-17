@@ -13,3 +13,4 @@ Export-Package: net.nodj.autoderivplugin,
  net.nodj.autoderivplugin.rules
 Bundle-Vendor: nodj
 Bundle-Activator: net.nodj.autoderivplugin.Activator
+Automatic-Module-Name: net.nodj.AutoDerivPlugin
