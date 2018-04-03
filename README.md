@@ -20,4 +20,8 @@ For more information, examples of use, see the [home page](http://nodj.github.io
 
 If something is wrong, or if you have an idea, a proposition, you should open an [issue](https://github.com/nodj/AutoDeriv/issues).
 
-If this plugin helped you, support it back with a [donation](https://pledgie.com/campaigns/27750)!
+If this plugin helped you, support it back with a [donation on pledgie](https://pledgie.com/campaigns/27750)!
+
+<a href="http://with-eclipse.github.io/" target="_blank">
+<img alt="with-Eclipse logo" src="http://with-eclipse.github.io/with-eclipse-0.jpg" />
+</a>
