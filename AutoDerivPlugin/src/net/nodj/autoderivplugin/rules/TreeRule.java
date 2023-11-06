@@ -73,18 +73,20 @@ public class TreeRule implements IRule{
 			fits = member.equals(res);
 			break;
 		case IResource.PROJECT:
+			//If same project -> true
+			fits = res.getProject().equals(member);
+			break;
 		case IResource.ROOT:
 			fits = true;
 			break;
 		case IResource.FOLDER :
 			IFolder f = (IFolder) member;
-//			info("TreeRule.applyOnResource() a " + f.exists(res.getLocation()));
-//			info("TreeRule.applyOnResource() b " + f.exists(res.getFullPath()));
 			IPath rp = res.getProjectRelativePath();
 			IPath fp = f.getProjectRelativePath();
-//			info("TreeRule.applyOnResource() c " + fp.isPrefixOf(rp));
-//			info("TreeRule.applyOnResource() d " + (f.findMember(res.getLocation()) != null));
-			fits = fp.isPrefixOf(rp);
+			
+			//Can be true only if the two folders are in the same project
+			boolean sameProject = res.getProject().equals(member.getProject());
+			fits = fp.isPrefixOf(rp) && sameProject;
 			break;
 		default:
 			// should not happen: resource is not supposed to be a project or /
